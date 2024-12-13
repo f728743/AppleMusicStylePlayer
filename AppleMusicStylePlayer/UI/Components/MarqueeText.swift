@@ -151,10 +151,10 @@ private struct AnimatedText: View, Animatable {
             leftFade: 32,
             rightFade: 32
         )
-        .background(.red)
+        .background(.pink.opacity(0.6))
 
         Text("Normal Text")
-            .background(.green)
+            .background(.mint.opacity(0.6))
     }
     .padding(.horizontal, 16)
     .font(.largeTitle)

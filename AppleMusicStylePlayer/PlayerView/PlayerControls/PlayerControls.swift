@@ -36,15 +36,6 @@ private extension CGSize {
     var verticalSpacing: CGFloat { height * 0.04 }
 }
 
-extension View {
-    func animationsDisabled(_ disabled: Bool) -> some View {
-        transaction { (tx: inout Transaction) in
-            tx.animation = tx.animation
-            tx.disablesAnimations = disabled
-        }
-    }
-}
-
 private extension PlayerControls {
     var  palette: Palette.PlayerCard.Type {
         UIColor.palette.playerCard.self
@@ -136,27 +127,6 @@ private extension PlayerControls {
     }
 }
 
-struct TimingIndicator: View {
-    let spacing: CGFloat
-    var body: some View {
-        VStack(spacing: spacing) {
-            Capsule()
-                .fill(.ultraThinMaterial)
-                .environment(\.colorScheme, .light)
-                .frame(height: 5)
-            HStack {
-                Text("0:00")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                Spacer(minLength: 0)
-                Text("3:33")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
-        }
-    }
-}
-
 #Preview {
     ZStack {
         Color(UIColor.gray)
@@ -169,12 +139,5 @@ struct TimingIndicator: View {
             playList: PlayListController(),
             player: Player()
         )
-    )
-}
-
-extension UIColor {
-    static let myControlBackground: UIColor = dynamic(
-        light: UIColor(red: 0.3, green: 0.4, blue: 0.5, alpha: 1),
-        dark: UIColor(red: 0.4, green: 0.3, blue: 0.2, alpha: 1)
     )
 }
