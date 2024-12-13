@@ -7,19 +7,19 @@
 
 import UIKit
 
-struct Palette {
-    struct PlayerCard {
-        static let opaque: UIColor = UIColor.dynamic(
+enum Palette {
+    enum PlayerCard {
+        static let opaque: UIColor = .dynamic(
             light: .white,
             dark: .white
         )
 
-        static let translucent: UIColor = UIColor.dynamic(
+        static let translucent: UIColor = .dynamic(
             light: .white.withAlphaComponent(0.5),
             dark: .white.withAlphaComponent(0.5)
         )
 
-        static let transparent: UIColor = UIColor.dynamic(
+        static let transparent: UIColor = .dynamic(
             light: .white.withAlphaComponent(0.3),
             dark: .white.withAlphaComponent(0.3)
         )

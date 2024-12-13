@@ -1,5 +1,5 @@
 //
-//  View.swift
+//  View+Extensions.swift
 //  AppleMusicStylePlayer
 //
 //  Created by Alexey Vorobyov on 13.12.2024.

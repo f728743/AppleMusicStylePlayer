@@ -36,8 +36,8 @@ struct MarqueeText: View {
 
     var body: some View {
         GeometryReader { geo in
-            let viewWidth =  geo.size.width
-            let animatedTextVisible =  textSize.width > viewWidth
+            let viewWidth = geo.size.width
+            let animatedTextVisible = textSize.width > viewWidth
             ZStack {
                 AnimatedText(
                     text: text,
@@ -82,8 +82,8 @@ private extension MarqueeText {
 
     var animation: Animation {
         .linear(duration: Double(textSize.width) / 30)
-        .delay(startDelay)
-        .repeatForever(autoreverses: false)
+            .delay(startDelay)
+            .repeatForever(autoreverses: false)
     }
 }
 
@@ -101,6 +101,7 @@ private struct AnimatedText: View, Animatable {
         get { value }
         set { value = newValue }
     }
+
     var body: some View {
         Group {
             Text(text)
@@ -116,7 +117,7 @@ private struct AnimatedText: View, Animatable {
         .mask(fadeMask)
     }
 
-    var lineWidth: CGFloat { textSize.width - (leftFade + rightFade) + spacing}
+    var lineWidth: CGFloat { textSize.width - (leftFade + rightFade) + spacing }
     var offset: Double { value * lineWidth }
 
     var fadeMask: some View {

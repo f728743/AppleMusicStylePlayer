@@ -29,7 +29,6 @@ struct TimingIndicator: View {
 }
 
 #Preview {
-    
     TimingIndicator(spacing: 10)
         .padding(.horizontal)
 }

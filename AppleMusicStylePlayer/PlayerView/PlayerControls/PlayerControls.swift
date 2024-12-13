@@ -37,7 +37,7 @@ private extension CGSize {
 }
 
 private extension PlayerControls {
-    var  palette: Palette.PlayerCard.Type {
+    var palette: Palette.PlayerCard.Type {
         UIColor.palette.playerCard.self
     }
 

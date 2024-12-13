@@ -14,7 +14,7 @@ struct ApplicationView: View {
 
     init() {
         let playlistController = PlayListController()
-        self.playerController = PlayerController(
+        playerController = PlayerController(
             playList: playlistController,
             player: Player()
         )

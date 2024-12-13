@@ -127,7 +127,6 @@
 /* Begin PBXShellScriptBuildPhase section */
 		AD1D39F02CF6E96200B7C883 /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -142,7 +141,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run SwiftLint\nSTART_DATE=$(date +\"%s\")\n\nPATH=${PATH}:/opt/homebrew/bin:/opt/local/bin:/usr/local/bin\n\nSWIFT_LINT=`which swiftlint`\n\n# Run SwiftLint for given filename\nrun_swiftlint() {\n    ${SWIFT_LINT}\n    local filename=\"${1}\"\n    if [[ \"${filename##*.}\" == \"swift\" ]]; then\n        ${SWIFT_LINT} --fix \"${filename}\"\n        ${SWIFT_LINT} lint \"${filename}\"\n    fi\n}\n\nif [ -x \"$(command -v ${SWIFT_LINT})\" ]\nthen\n    echo \"SwiftLint version: $(${SWIFT_LINT} version)\"\n    run_swiftlint\n    git config --global diff.submodule diff\n\n    # Run for both staged and unstaged files in main repo\n    git diff --name-only | while read filename; do run_swiftlint \"${filename}\"; done\n    #git diff --cached --name-only | while read filename; do run_swiftlint \"${filename}\"; done\n\n    # Run for all files in submodules\n    git diff | grep '^diff --git' | sed -e 's/diff --git a\\/\\(.*\\) b\\/.*/\\1/' | grep '\\.swift$' | while read filename; do run_swiftlint \"${filename}\"; done\nelse\n    echo \"${SWIFT_LINT} is not installed.\"\n    exit 0\nfi\n\nEND_DATE=$(date +\"%s\")\n\nDIFF=$(($END_DATE - $START_DATE))\necho \"SwiftLint took $(($DIFF / 60)) minutes and $(($DIFF % 60)) seconds to complete.\"\n";
+			shellScript = "# Run SwiftLint\nSTART_DATE=$(date +\"%s\")\n\nPATH=${PATH}:/opt/homebrew/bin:/opt/local/bin:/usr/local/bin\n\nSWIFT_LINT=`which swiftlint`\n\n# Run SwiftLint for given filename\nrun_swiftlint() {\n    ${SWIFT_LINT}\n    local filename=\"${1}\"\n    if [[ \"${filename##*.}\" == \"swift\" ]]; then\n       # ${SWIFT_LINT} --fix \"${filename}\"\n        ${SWIFT_LINT} lint \"${filename}\"\n    fi\n}\n\nif [ -x \"$(command -v ${SWIFT_LINT})\" ]\nthen\n    echo \"SwiftLint version: $(${SWIFT_LINT} version)\"\n    run_swiftlint\n    git config --global diff.submodule diff\n\n    # Run for both staged and unstaged files in main repo\n    git diff --name-only | while read filename; do run_swiftlint \"${filename}\"; done\n    #git diff --cached --name-only | while read filename; do run_swiftlint \"${filename}\"; done\n\n    # Run for all files in submodules\n    git diff | grep '^diff --git' | sed -e 's/diff --git a\\/\\(.*\\) b\\/.*/\\1/' | grep '\\.swift$' | while read filename; do run_swiftlint \"${filename}\"; done\nelse\n    echo \"${SWIFT_LINT} is not installed.\"\n    exit 0\nfi\n\nEND_DATE=$(date +\"%s\")\n\nDIFF=$(($END_DATE - $START_DATE))\necho \"SwiftLint took $(($DIFF / 60)) minutes and $(($DIFF % 60)) seconds to complete.\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
