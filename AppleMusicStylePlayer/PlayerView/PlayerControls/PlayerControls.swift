@@ -9,8 +9,8 @@ import SwiftUI
 
 struct PlayerControls: View {
     @Environment(PlayerController.self) var model
-    @State private var speed = 50.0
-    @State private var isEditing = false
+    @State private var volume: CGFloat = 0.5
+
     var body: some View {
         GeometryReader {
             let size = $0.size
@@ -51,6 +51,7 @@ private extension PlayerControls {
                     .foregroundColor(Color(palette.opaque))
                 MarqueeText(model.display.subtitle ?? "", leftFade: fade, rightFade: fade)
                     .foregroundColor(Color(palette.translucent))
+                    .blendMode(.overlay)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -90,13 +91,15 @@ private extension PlayerControls {
         VStack(spacing: playerSize.verticalSpacing) {
             HStack(spacing: 15) {
                 Image(systemName: "speaker.fill")
-                Capsule()
-                    .fill(.ultraThinMaterial)
-                    .environment(\.colorScheme, .light)
-                    .frame(height: 5)
+                RubberSlider(
+                    value: $volume,
+                    in: 0 ... 1,
+                    config: .playerControls
+                )
                 Image(systemName: "speaker.wave.3.fill")
             }
-            .foregroundColor(.gray)
+            .foregroundColor(Color(palette.translucent))
+            .blendMode(.overlay)
 
             footer(width: playerSize.width)
                 .padding(.top, playerSize.verticalSpacing)
@@ -124,16 +127,24 @@ private extension PlayerControls {
             }
         }
         .foregroundColor(Color(palette.translucent))
+        .blendMode(.overlay)
     }
 }
 
 #Preview {
-    ZStack {
-        Color(UIColor.gray)
-            .ignoresSafeArea()
+    ZStack(alignment: .bottom) {
+        ColorfulBackground(
+            colors: [
+                UIColor(red: 0.3, green: 0.3, blue: 0.4, alpha: 1.0),
+                UIColor(red: 0.7, green: 0.3, blue: 0.4, alpha: 1.0)
+            ].map { Color($0) }
+        )
+        .ignoresSafeArea()
+
         PlayerControls()
             .frame(height: 400)
     }
+
     .environment(
         PlayerController(
             playList: PlayListController(),

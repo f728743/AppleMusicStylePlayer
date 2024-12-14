@@ -31,10 +31,12 @@ struct RubberSlider: View {
             let width = (value / range.upperBound) * size.width
             ZStack(alignment: .leading) {
                 Rectangle()
-                    .fill(.foreground)
+                    .fill(config.maximumTrackColor)
+                    .blendMode(config.blended ? .overlay : .normal)
 
                 Rectangle()
-                    .fill(.tint)
+                    .fill(isActive ? config.minimumTrackActiveColor : config.minimumTrackInactiveColor)
+                    .blendMode(isActive ? .normal : config.blended ? .overlay : .normal)
                     .mask(alignment: .leading) {
                         Rectangle()
                             .frame(width: width)
@@ -57,7 +59,7 @@ struct RubberSlider: View {
         }
         .frame(height: config.activeHeight)
         .mask {
-            RoundedRectangle(cornerRadius: 15)
+            RoundedRectangle(cornerRadius: config.activeHeight)
                 .frame(height: isActive ? config.activeHeight : config.inactiveHeight)
         }
         .animation(.snappy, value: isActive)
@@ -66,6 +68,10 @@ struct RubberSlider: View {
     struct Config {
         var activeHeight: CGFloat = 17
         var inactiveHeight: CGFloat = 7
+        var minimumTrackActiveColor: Color = Color(UIColor.tintColor)
+        var minimumTrackInactiveColor: Color = Color(UIColor.tintColor)
+        var maximumTrackColor: Color = Color(UIColor.systemFill)
+        var blended: Bool = true
     }
 }
 
@@ -73,8 +79,6 @@ struct RubberSlider: View {
     @Previewable @State var value: CGFloat = 0.3
     VStack {
         RubberSlider(value: $value, in: 0 ... 1)
-            .tint(.red)
-            .foregroundColor(.blue)
         Text(value, format: .number.precision(.fractionLength(2)))
     }
     .padding()
