@@ -23,7 +23,7 @@ struct PlayerControls: View {
                         .padding(.horizontal, ViewConst.playerCardPaddings)
                 }
                 .frame(height: size.height / 2.5, alignment: .top)
-                controls(playerSize: size)
+                PlayerButtons(playerSize: size)
                     .padding(.horizontal, ViewConst.playerCardPaddings)
                 volume(playerSize: size)
                     .padding(.horizontal, ViewConst.playerCardPaddings)
@@ -45,11 +45,14 @@ private extension PlayerControls {
         HStack(alignment: .center, spacing: 15) {
             VStack(alignment: .leading, spacing: 4) {
                 let fade = ViewConst.playerCardPaddings
-                MarqueeText(model.display.title, leftFade: fade, rightFade: fade)
+                let cfg = MarqueeText.Config(leftFade: fade, rightFade: fade)
+                MarqueeText(model.display.title, config: cfg)
+                    .transformEffect(.identity)
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(Color(palette.opaque))
-                MarqueeText(model.display.subtitle ?? "", leftFade: fade, rightFade: fade)
+                MarqueeText(model.display.subtitle ?? "", config: cfg)
+                    .transformEffect(.identity)
                     .foregroundColor(Color(palette.translucent))
                     .blendMode(.overlay)
             }
@@ -57,49 +60,21 @@ private extension PlayerControls {
         }
     }
 
-    func controls(playerSize: CGSize) -> some View {
-        HStack(spacing: playerSize.width * 0.18) {
-            Button(
-                action: { model.onBackward() },
-                label: {
-                    Image(systemName: "backward.fill")
-                        .font(playerSize.height < 300 ? .title3 : .title)
-                }
-            )
-
-            Button(
-                action: { model.onPlayPause() },
-                label: {
-                    Image(systemName: model.playPauseIcon.systemImage)
-                        .font(playerSize.height < 300 ? .largeTitle : .system(size: 50))
-                }
-            )
-
-            Button(
-                action: { model.onForward() },
-                label: {
-                    Image(systemName: "forward.fill")
-                        .font(playerSize.height < 300 ? .title3 : .title)
-                }
-            )
-        }
-        .foregroundColor(.white)
-        .frame(maxHeight: .infinity)
-    }
-
     func volume(playerSize: CGSize) -> some View {
         VStack(spacing: playerSize.verticalSpacing) {
             HStack(spacing: 15) {
                 Image(systemName: "speaker.fill")
+                    .blendMode(.overlay)
                 RubberSlider(
                     value: $volume,
                     in: 0 ... 1,
                     config: .playerControls
                 )
+                .transformEffect(.identity)
                 Image(systemName: "speaker.wave.3.fill")
+                    .blendMode(.overlay)
             }
             .foregroundColor(Color(palette.translucent))
-            .blendMode(.overlay)
 
             footer(width: playerSize.width)
                 .padding(.top, playerSize.verticalSpacing)
@@ -135,8 +110,8 @@ private extension PlayerControls {
     ZStack(alignment: .bottom) {
         ColorfulBackground(
             colors: [
-                UIColor(red: 0.3, green: 0.3, blue: 0.4, alpha: 1.0),
-                UIColor(red: 0.7, green: 0.3, blue: 0.4, alpha: 1.0)
+                UIColor(red: 0.3, green: 0.4, blue: 0.3, alpha: 1.0),
+                UIColor(red: 0.4, green: 0.4, blue: 0.6, alpha: 1.0)
             ].map { Color($0) }
         )
         .ignoresSafeArea()

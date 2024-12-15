@@ -18,16 +18,17 @@ struct TimingIndicator: View {
                 in: 0 ... 1,
                 config: .playerControls
             )
+            .transformEffect(.identity)
 
             HStack {
                 Text("0:00")
                 Spacer(minLength: 0)
                 Text("3:33")
             }
+            .blendMode(.overlay)
             .font(.caption)
             .foregroundColor(Color(palette.translucent))
         }
-        .blendMode(.overlay)
     }
 }
 
@@ -42,7 +43,8 @@ extension RubberSlider.Config {
         Self(
             minimumTrackActiveColor: Color(Palette.PlayerCard.opaque),
             minimumTrackInactiveColor: Color(Palette.PlayerCard.translucent),
-            maximumTrackColor: Color(Palette.PlayerCard.transparent)
+            maximumTrackColor: Color(Palette.PlayerCard.transparent),
+            blended: true
         )
     }
 }

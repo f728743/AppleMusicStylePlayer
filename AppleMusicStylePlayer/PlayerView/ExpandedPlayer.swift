@@ -18,6 +18,7 @@ struct ExpandedPlayer: View {
     var body: some View {
         VStack(spacing: 12) {
             grip
+                .blendMode(.overlay)
                 .opacity(expanded ? 1 : 0)
 
             if expanded {
@@ -69,15 +70,14 @@ private extension ExpandedPlayer {
         safeArea: (UIApplication.keyWindow?.safeAreaInsets ?? .zero).edgeInsets,
         animationNamespace: Namespace().wrappedValue
     )
-    .background(Rectangle()
-        .fill(
-            .linearGradient(
-                colors: [.gray],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+    .background {
+        ColorfulBackground(
+            colors: [
+                UIColor(red: 0.3, green: 0.4, blue: 0.3, alpha: 1.0),
+                UIColor(red: 0.4, green: 0.4, blue: 0.6, alpha: 1.0)
+            ].map { Color($0) }
         )
-    )
+    }
     .ignoresSafeArea()
     .environment(
         PlayerController(

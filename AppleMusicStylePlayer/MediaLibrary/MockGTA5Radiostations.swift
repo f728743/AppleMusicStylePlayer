@@ -135,7 +135,7 @@ extension MockGTA5Radio {
                     artwork: url(String($0.logo.split(separator: ".")[0])),
                     title: $0.title,
                     subtitle: $0.genre,
-                    online: true
+                    online: false
                 )
             }
         )

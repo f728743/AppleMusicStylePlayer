@@ -9,29 +9,14 @@ import SwiftUI
 
 struct MarqueeText: View {
     let text: String
-    let startDelay: Double
-    let alignment: Alignment
-    let leftFade: CGFloat
-    let rightFade: CGFloat
-    let spacing: CGFloat
+    private var config: Config
 
     @State private var textSize: CGSize = .zero
     @State private var animate = false
 
-    init(
-        _ text: String,
-        startDelay: Double = 1.0,
-        alignment: Alignment? = nil,
-        leftFade: CGFloat = 40,
-        rightFade: CGFloat = 40,
-        spacing: CGFloat = 100
-    ) {
+    init(_ text: String, config: Config = .init()) {
         self.text = text
-        self.startDelay = startDelay
-        self.alignment = alignment ?? .topLeading
-        self.leftFade = leftFade
-        self.rightFade = rightFade
-        self.spacing = spacing
+        self.config = config
     }
 
     var body: some View {
@@ -39,16 +24,8 @@ struct MarqueeText: View {
             let viewWidth = geo.size.width
             let animatedTextVisible = textSize.width > viewWidth
             ZStack {
-                AnimatedText(
-                    text: text,
-                    viewWidth: viewWidth,
-                    textSize: textSize,
-                    leftFade: leftFade,
-                    rightFade: rightFade,
-                    spacing: spacing,
-                    value: animate ? 1 : 0
-                )
-                .hidden(!animatedTextVisible)
+                animatedText(viewWidth: viewWidth)
+                    .hidden(!animatedTextVisible)
 
                 staticText
                     .hidden(animatedTextVisible)
@@ -57,8 +34,8 @@ struct MarqueeText: View {
         .frame(height: textSize.height)
         .overlay {
             Text(text)
-                .padding(.leading, leftFade)
-                .padding(.trailing, rightFade)
+                .padding(.leading, config.leftFade)
+                .padding(.trailing, config.rightFade)
                 .lineLimit(1)
                 .fixedSize()
                 .measureSize { textSize = $0 }
@@ -70,39 +47,18 @@ struct MarqueeText: View {
             }
         }
     }
+
+    struct Config {
+        var startDelay: Double = 1.0
+        var alignment: Alignment = .leading
+        var leftFade: CGFloat = 40
+        var rightFade: CGFloat = 40
+        var spacing: CGFloat = 100
+    }
 }
 
 private extension MarqueeText {
-    var staticText: some View {
-        Text(text)
-            .padding(.leading, leftFade)
-            .padding(.trailing, rightFade)
-            .frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
-    }
-
-    var animation: Animation {
-        .linear(duration: Double(textSize.width) / 30)
-            .delay(startDelay)
-            .repeatForever(autoreverses: false)
-    }
-}
-
-private struct AnimatedText: View, Animatable {
-    let text: String
-    let viewWidth: CGFloat
-    let textSize: CGSize
-    let leftFade: CGFloat
-    let rightFade: CGFloat
-    let spacing: CGFloat
-
-    var value: Double
-
-    var animatableData: Double {
-        get { value }
-        set { value = newValue }
-    }
-
-    var body: some View {
+    func animatedText(viewWidth: CGFloat) -> some View {
         Group {
             Text(text)
                 .offset(x: -offset)
@@ -113,12 +69,25 @@ private struct AnimatedText: View, Animatable {
         .fixedSize(horizontal: true, vertical: false)
         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         .frame(width: viewWidth)
-        .offset(x: leftFade)
+        .offset(x: config.leftFade)
         .mask(fadeMask)
     }
 
-    var lineWidth: CGFloat { textSize.width - (leftFade + rightFade) + spacing }
-    var offset: Double { value * lineWidth }
+    var lineWidth: CGFloat { textSize.width - (config.leftFade + config.rightFade) + config.spacing }
+    var offset: Double { animate ? lineWidth : 0 }
+
+    var staticText: some View {
+        Text(text)
+            .padding(.leading, config.leftFade)
+            .padding(.trailing, config.rightFade)
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: config.alignment)
+    }
+
+    var animation: Animation {
+        .linear(duration: Double(textSize.width) / 30)
+            .delay(config.startDelay)
+            .repeatForever(autoreverses: false)
+    }
 
     var fadeMask: some View {
         HStack(spacing: 0) {
@@ -127,7 +96,7 @@ private struct AnimatedText: View, Animatable {
                 startPoint: .leading,
                 endPoint: .trailing
             )
-            .frame(width: leftFade)
+            .frame(width: config.leftFade)
             LinearGradient(
                 gradient: Gradient(colors: [.black, .black]),
                 startPoint: .leading,
@@ -138,7 +107,7 @@ private struct AnimatedText: View, Animatable {
                 startPoint: .leading,
                 endPoint: .trailing
             )
-            .frame(width: rightFade)
+            .frame(width: config.rightFade)
         }
         .padding(.horizontal, 6)
     }
@@ -148,9 +117,11 @@ private struct AnimatedText: View, Animatable {
     HStack {
         MarqueeText(
             "A text that is way too long, but it scrolls",
-            startDelay: 3,
-            leftFade: 32,
-            rightFade: 32
+            config: .init(
+                startDelay: 3,
+                leftFade: 32,
+                rightFade: 32
+            )
         )
         .background(.pink.opacity(0.6))
 

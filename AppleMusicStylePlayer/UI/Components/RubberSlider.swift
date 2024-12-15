@@ -37,12 +37,14 @@ struct RubberSlider: View {
                 Rectangle()
                     .fill(isActive ? config.minimumTrackActiveColor : config.minimumTrackInactiveColor)
                     .blendMode(isActive ? .normal : config.blended ? .overlay : .normal)
-                    .mask(alignment: .leading) {
-                        Rectangle()
-                            .frame(width: width)
-                    }
+                    .frame(width: width)
             }
             .contentShape(.rect)
+            .mask {
+                RoundedRectangle(cornerRadius: config.activeHeight)
+                    .frame(height: isActive ? config.activeHeight : config.inactiveHeight)
+            }
+
             .highPriorityGesture(
                 DragGesture(minimumDistance: 0)
                     .updating($isActive) { _, out, _ in
@@ -58,20 +60,16 @@ struct RubberSlider: View {
             )
         }
         .frame(height: config.activeHeight)
-        .mask {
-            RoundedRectangle(cornerRadius: config.activeHeight)
-                .frame(height: isActive ? config.activeHeight : config.inactiveHeight)
-        }
         .animation(.snappy, value: isActive)
     }
 
     struct Config {
         var activeHeight: CGFloat = 17
         var inactiveHeight: CGFloat = 7
-        var minimumTrackActiveColor: Color = Color(UIColor.tintColor)
-        var minimumTrackInactiveColor: Color = Color(UIColor.tintColor)
-        var maximumTrackColor: Color = Color(UIColor.systemFill)
-        var blended: Bool = true
+        var minimumTrackActiveColor: Color = .init(UIColor.tintColor)
+        var minimumTrackInactiveColor: Color = .init(UIColor.tintColor)
+        var maximumTrackColor: Color = .init(UIColor.systemFill)
+        var blended: Bool = false
     }
 }
 
