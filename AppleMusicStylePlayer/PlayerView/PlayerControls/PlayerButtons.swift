@@ -13,27 +13,27 @@ struct PlayerButtons: View {
 
     var body: some View {
         HStack(spacing: playerSize.width * 0.14) {
-            Button(
-                action: { model.onBackward() },
-                label: {
-                    Image(systemName: "backward.fill")
-                        .font(playerSize.height < 300 ? .title3 : .title)
+            PlayerButton(
+                model.backwardButton,
+                config: .playerControls,
+                onEnded: {
+                    model.onBackward()
                 }
             )
 
-            Button(
-                action: { model.onPlayPause() },
-                label: {
-                    Image(systemName: model.playPauseIcon.systemImage)
-                        .font(playerSize.height < 300 ? .largeTitle : .system(size: 50))
+            PlayerButton(
+                model.playPauseButton,
+                config: .playerControls,
+                onEnded: {
+                    model.onPlayPause()
                 }
             )
 
-            Button(
-                action: { model.onForward() },
-                label: {
-                    Image(systemName: "forward.fill")
-                        .font(playerSize.height < 300 ? .title3 : .title)
+            PlayerButton(
+                model.forwardButton,
+                config: .playerControls,
+                onEnded: {
+                    model.onForward()
                 }
             )
         }
@@ -41,18 +41,13 @@ struct PlayerButtons: View {
     }
 }
 
-struct GrowingButton: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 44, height: 44)
-            .scaleEffect(configuration.isPressed ? 0.8 : 1)
-            .frame(width: 60, height: 60)
-            .background(.blue.opacity(configuration.isPressed ? 0.5 : 0))
-            .foregroundStyle(.white)
-            .clipShape(Capsule())
-            .scaleEffect(configuration.isPressed ? 0.9 : 1)
-            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
+extension PlayerButton.Config {
+    static var playerControls: Self {
+        Self(
+            labelColor: .init(Palette.PlayerCard.opaque),
+            tint: .init(Palette.PlayerCard.transparent),
+            pressedColor: .init(Palette.PlayerCard.translucent)
+        )
     }
 }
 
@@ -68,9 +63,12 @@ struct GrowingButton: ButtonStyle {
 
         VStack {
             Text("Header")
+                .blendMode(.overlay)
             PlayerButtons(playerSize: UIScreen.main.bounds.size)
             Text("Footer")
+                .blendMode(.overlay)
         }
+        .foregroundColor(.init(Palette.PlayerCard.transparent))
     }
 
     .environment(

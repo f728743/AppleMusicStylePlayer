@@ -15,7 +15,7 @@ struct PlayerControls: View {
         GeometryReader {
             let size = $0.size
             let spacing = size.verticalSpacing
-            VStack(spacing: spacing) {
+            VStack(spacing: 0) {
                 VStack(spacing: spacing) {
                     trackInfo
                     TimingIndicator(spacing: spacing)
@@ -26,6 +26,7 @@ struct PlayerControls: View {
                 PlayerButtons(playerSize: size)
                     .padding(.horizontal, ViewConst.playerCardPaddings)
                 volume(playerSize: size)
+                    .frame(height: size.height / 2.5, alignment: .bottom)
                     .padding(.horizontal, ViewConst.playerCardPaddings)
             }
         }
@@ -79,7 +80,6 @@ private extension PlayerControls {
             footer(width: playerSize.width)
                 .padding(.top, playerSize.verticalSpacing)
         }
-        .frame(height: playerSize.height / 2.5, alignment: .bottom)
     }
 
     func footer(width: CGFloat) -> some View {

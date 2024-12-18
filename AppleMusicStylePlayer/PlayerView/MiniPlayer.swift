@@ -34,7 +34,7 @@ struct MiniPlayer: View {
             Spacer(minLength: 0)
 
             Group {
-                Button("", systemImage: model.playPauseIcon.systemImage) {
+                Button("", systemImage: model.playPauseButton.systemImage) {
                     model.onPlayPause()
                 }
 

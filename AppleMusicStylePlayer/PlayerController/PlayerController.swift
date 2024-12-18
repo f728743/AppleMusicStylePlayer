@@ -11,12 +11,6 @@ import UIKit
 
 @Observable
 class PlayerController {
-    enum PlayPauseIcon {
-        case play
-        case stop
-        case pause
-    }
-
     enum State {
         case playing
         case paused
@@ -50,12 +44,16 @@ class PlayerController {
         display.subtitle
     }
 
-    var playPauseIcon: PlayPauseIcon {
+    var playPauseButton: ButtonType {
         switch state {
         case .playing: currentMedia.map(\.online) ?? false ? .stop : .pause
         case .paused: .play
         }
     }
+    
+    var backwardButton: ButtonType { .backward }
+    var forwardButton: ButtonType { .forward }
+
 
     func onPlayPause() {
         enshureMediaAvailable()
@@ -141,16 +139,6 @@ private extension PlayerController.State {
         switch self {
         case .playing: self = .paused
         case .paused: self = .playing
-        }
-    }
-}
-
-extension PlayerController.PlayPauseIcon {
-    var systemImage: String {
-        switch self {
-        case .play: return "play.fill"
-        case .stop: return "stop.fill"
-        case .pause: return "pause.fill"
         }
     }
 }
