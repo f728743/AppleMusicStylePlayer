@@ -124,7 +124,7 @@ extension ButtonType {
                     print("onEnded Button One")
                 }
             )
-                            .disabled(true)
+            .disabled(true)
             Text("Disabled")
         }
 
@@ -141,7 +141,7 @@ extension ButtonType {
                     print("onEnded Button Two")
                 }
             )
-                .disabled(false)
+            .disabled(false)
             Text("Enabled")
         }
     }

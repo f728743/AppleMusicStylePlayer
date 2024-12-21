@@ -50,10 +50,13 @@ class PlayerController {
         case .paused: .play
         }
     }
-    
+
     var backwardButton: ButtonType { .backward }
     var forwardButton: ButtonType { .forward }
 
+    func onAppear() {
+        updateColors()
+    }
 
     func onPlayPause() {
         enshureMediaAvailable()

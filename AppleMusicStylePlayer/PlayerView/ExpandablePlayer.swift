@@ -28,6 +28,7 @@ struct ExpandablePlayer: View {
                     mainWindow = window
                     mainWindow?.backgroundColor = .green
                 }
+                model.onAppear()
             }
             .onChange(of: expandPlayer) {
                 if expandPlayer {

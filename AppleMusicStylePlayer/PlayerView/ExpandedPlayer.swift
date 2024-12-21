@@ -54,35 +54,45 @@ private extension ExpandedPlayer {
     var artwork: some View {
         GeometryReader {
             let size = $0.size
+            let small = model.state == .paused
             KFImage.url(model.display.artwork)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
+                .background(Color(UIColor.palette.playerCard.artworkBackground))
+                .clipShape(RoundedRectangle(cornerRadius: expanded ? 10 : 5, style: .continuous))
+                .padding(small ? 48 : 0)
+                .shadow(
+                    color: Color(.sRGBLinear, white: 0, opacity: small ? 0.13 : 0.33),
+                    radius: small ? 3 : 8,
+                    y: small ? 3 : 10
+                )
                 .frame(width: size.width, height: size.height)
-                .clipShape(RoundedRectangle(cornerRadius: expanded ? 15 : 5, style: .continuous))
+                .animation(.smooth, value: model.state)
         }
     }
 }
 
 #Preview {
+    @Previewable @State var model = PlayerController(
+        playList: PlayListController(),
+        player: Player()
+    )
+
     ExpandedPlayer(
         expanded: .constant(true),
         size: UIScreen.main.bounds.size,
         safeArea: (UIApplication.keyWindow?.safeAreaInsets ?? .zero).edgeInsets,
         animationNamespace: Namespace().wrappedValue
     )
+    .onAppear {
+        model.onAppear()
+    }
     .background {
         ColorfulBackground(
-            colors: [
-                UIColor(red: 0.3, green: 0.4, blue: 0.3, alpha: 1.0),
-                UIColor(red: 0.4, green: 0.4, blue: 0.6, alpha: 1.0)
-            ].map { Color($0) }
+            colors: model.colors.map { Color($0.color) }
         )
+        .overlay(Color(UIColor(white: 0.4, alpha: 0.5)))
     }
     .ignoresSafeArea()
-    .environment(
-        PlayerController(
-            playList: PlayListController(),
-            player: Player()
-        )
-    )
+    .environment(model)
 }
