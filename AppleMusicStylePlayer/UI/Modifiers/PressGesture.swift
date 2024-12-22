@@ -38,12 +38,12 @@ struct PressGesture: ViewModifier {
         content
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                    .updating($startTimestamp, body: { _, current, _ in
+                    .updating($startTimestamp) { _, current, _ in
                         if current == nil {
                             onPressed()
                             current = Date()
                         }
-                    })
+                    }
                     .onEnded { _ in
                         onEnded()
                     }
