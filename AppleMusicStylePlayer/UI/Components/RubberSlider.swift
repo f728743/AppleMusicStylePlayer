@@ -7,10 +7,24 @@
 
 import SwiftUI
 
+struct RubberSliderConfig {
+    var labelLocation: LabelLocation = .side
+    var activeHeight: CGFloat = 17
+    var inactiveHeight: CGFloat = 7
+    var maxStretch: CGFloat = 20
+    var pushStretchRatio: CGFloat = 0.2
+    var pullStretchRatio: CGFloat = 0.5
+    var minimumTrackActiveColor: Color = .init(UIColor.tintColor)
+    var minimumTrackInactiveColor: Color = .init(UIColor.systemGray3)
+    var maximumTrackColor: Color = .init(UIColor.systemGray6)
+    var blendMode: BlendMode = .normal
+    var syncLabelsStyle: Bool = false
+}
+
 struct RubberSlider<LeadingContent: View, TrailingContent: View>: View {
-    @Binding private var value: CGFloat
-    private var range: ClosedRange<CGFloat>
-    private var config: Config
+    @Binding private var value: Double
+    private var range: ClosedRange<Double>
+    private var config: RubberSliderConfig
     @State private var lastStoredValue: CGFloat
     @State private var stretchingValue: CGFloat = 0
     @State private var viewSize: CGSize = .zero
@@ -19,9 +33,9 @@ struct RubberSlider<LeadingContent: View, TrailingContent: View>: View {
     let trailingLabel: TrailingContent?
 
     init(
-        value: Binding<CGFloat>,
-        in range: ClosedRange<CGFloat>,
-        config: Config = .init(),
+        value: Binding<Double>,
+        in range: ClosedRange<Double>,
+        config: RubberSliderConfig = .init(),
         leadingLabel: (() -> LeadingContent)? = nil,
         trailingLabel: (() -> TrailingContent)? = nil
     ) {
@@ -43,31 +57,31 @@ struct RubberSlider<LeadingContent: View, TrailingContent: View>: View {
         }
         .animation(.snappy, value: isActive)
     }
-
-    struct Config {
-        var labelLocation: LabelLocation = .side
-        var activeHeight: CGFloat = 17
-        var inactiveHeight: CGFloat = 7
-        var maxStretch: CGFloat = 20
-        var pushStretchRatio: CGFloat = 0.2
-        var pullStretchRatio: CGFloat = 0.5
-        var minimumTrackActiveColor: Color = .init(UIColor.tintColor)
-        var minimumTrackInactiveColor: Color = .init(UIColor.tintColor)
-        var maximumTrackColor: Color = .init(UIColor.systemFill)
-        var blended: Bool = false
-    }
 }
 
 private extension RubberSlider {
+    @ViewBuilder
+    func styled<Content: View>(_ content: Content) -> some View {
+        if config.syncLabelsStyle {
+            content
+                .animation(nil, value: isActive)
+                .transformEffect(.identity)
+                .foregroundColor(isActive ? config.minimumTrackActiveColor : config.minimumTrackInactiveColor)
+                .blendMode(isActive ? .normal : config.blendMode)
+        } else {
+            content
+        }
+    }
+
     var bottomLabeledTrack: some View {
         VStack(spacing: 0) {
             track
             HStack(spacing: 0) {
                 let padding = (isActive ? 0 : config.growth) + config.maxStretch
-                leadingLabel
+                styled(leadingLabel)
                     .padding(.leading, padding - leadingStretch)
                 Spacer()
-                trailingLabel
+                styled(trailingLabel)
                     .padding(.trailing, padding - trailingStretch)
             }
         }
@@ -76,10 +90,11 @@ private extension RubberSlider {
     var sideLabeledTrack: some View {
         HStack(spacing: 0) {
             let padding = (isActive ? 0 : config.growth) + config.maxStretch
-            leadingLabel
+            styled(leadingLabel)
                 .offset(x: padding - leadingStretch)
             track
-            trailingLabel
+
+            styled(trailingLabel)
                 .offset(x: trailingStretch - padding)
         }
     }
@@ -90,15 +105,15 @@ private extension RubberSlider {
             ZStack {
                 Capsule()
                     .fill(config.maximumTrackColor)
-                    .blendMode(config.blended ? .overlay : .normal)
+                    .blendMode(config.blendMode)
 
-                let fillWidth = normalized(value)
+                let fillWidth = max(0, normalized(value)
                     * trackWidth(for: size.width, active: isActive)
                     - leadingStretch
-                    + trailingStretch
+                    + trailingStretch)
                 Capsule()
                     .fill(isActive ? config.minimumTrackActiveColor : config.minimumTrackInactiveColor)
-                    .blendMode(isActive ? .normal : config.blended ? .overlay : .normal)
+                    .blendMode(isActive ? .normal : config.blendMode)
                     .mask(
                         Rectangle()
                             .frame(width: fillWidth)
@@ -126,7 +141,7 @@ private extension RubberSlider {
                         let progress = (value.translation.width / trackWidth(for: size.width, active: true))
                             * range.distance
                             + lastStoredValue
-                        self.value = progress.clamped(to: range)
+                        self.value = Double(progress).clamped(to: range)
                         if progress < range.lowerBound {
                             stretchingValue = normalized(progress - range.lowerBound)
                         }
@@ -180,7 +195,7 @@ private extension RubberSlider {
     }
 }
 
-extension RubberSlider.Config {
+extension RubberSliderConfig {
     enum LabelLocation {
         case bottom
         case side
@@ -193,9 +208,9 @@ extension RubberSlider.Config {
 
 extension RubberSlider where LeadingContent == EmptyView {
     init(
-        value: Binding<CGFloat>,
-        in range: ClosedRange<CGFloat>,
-        config: Config = .init(),
+        value: Binding<Double>,
+        in range: ClosedRange<Double>,
+        config: RubberSliderConfig = .init(),
         trailingLabel: (() -> TrailingContent)? = nil
     ) {
         _value = value
@@ -209,9 +224,9 @@ extension RubberSlider where LeadingContent == EmptyView {
 
 extension RubberSlider where TrailingContent == EmptyView {
     init(
-        value: Binding<CGFloat>,
-        in range: ClosedRange<CGFloat>,
-        config: Config = .init(),
+        value: Binding<Double>,
+        in range: ClosedRange<Double>,
+        config: RubberSliderConfig = .init(),
         leadingLabel: (() -> LeadingContent)? = nil
     ) {
         _value = value
@@ -225,9 +240,9 @@ extension RubberSlider where TrailingContent == EmptyView {
 
 extension RubberSlider where LeadingContent == EmptyView, TrailingContent == EmptyView {
     init(
-        value: Binding<CGFloat>,
-        in range: ClosedRange<CGFloat>,
-        config: Config = .init()
+        value: Binding<Double>,
+        in range: ClosedRange<Double>,
+        config: RubberSliderConfig = .init()
     ) {
         _value = value
         self.range = range
@@ -239,9 +254,9 @@ extension RubberSlider where LeadingContent == EmptyView, TrailingContent == Emp
 }
 
 #Preview {
-    @Previewable @State var progress: CGFloat = 0.5
-    @Previewable @State var volume: CGFloat = 0.5
-    let range = CGFloat(0) ... 2
+    @Previewable @State var progress: Double = 0.5
+    @Previewable @State var volume: Double = 0.5
+    let range = 0.0 ... 2
     VStack(spacing: 50) {
         RubberSlider(
             value: $progress,
@@ -263,7 +278,7 @@ extension RubberSlider where LeadingContent == EmptyView, TrailingContent == Emp
         RubberSlider(
             value: $volume,
             in: 0 ... 1,
-            config: .init(labelLocation: .side),
+            config: .init(labelLocation: .side, syncLabelsStyle: true),
             leadingLabel: {
                 Image(systemName: "speaker.fill")
                     .padding(.trailing, 4)

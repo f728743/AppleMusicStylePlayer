@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlayerControls: View {
     @Environment(PlayerController.self) var model
-    @State private var volume: CGFloat = 0.5
+    @State private var volume: Double = 0.5
 
     var body: some View {
         GeometryReader {
@@ -18,16 +18,16 @@ struct PlayerControls: View {
             VStack(spacing: 0) {
                 VStack(spacing: spacing) {
                     trackInfo
+                    let indicatorPadding = ViewConst.playerCardPaddings - RubberSliderConfig.playerControls.growth
                     TimingIndicator(spacing: spacing)
                         .padding(.top, spacing)
-                        .padding(.horizontal, ViewConst.playerCardPaddings)
+                        .padding(.horizontal, indicatorPadding)
                 }
                 .frame(height: size.height / 2.5, alignment: .top)
                 PlayerButtons(playerSize: size)
                     .padding(.horizontal, ViewConst.playerCardPaddings)
                 volume(playerSize: size)
                     .frame(height: size.height / 2.5, alignment: .bottom)
-                    .padding(.horizontal, ViewConst.playerCardPaddings)
             }
         }
     }
@@ -63,22 +63,12 @@ private extension PlayerControls {
 
     func volume(playerSize: CGSize) -> some View {
         VStack(spacing: playerSize.verticalSpacing) {
-            HStack(spacing: 15) {
-                Image(systemName: "speaker.fill")
-                    .blendMode(.overlay)
-                RubberSlider(
-                    value: $volume,
-                    in: 0 ... 1,
-                    config: .playerControls
-                )
-                .transformEffect(.identity)
-                Image(systemName: "speaker.wave.3.fill")
-                    .blendMode(.overlay)
-            }
-            .foregroundColor(Color(palette.translucent))
+            VolumeSlider()
+                .padding(.horizontal, 8)
 
             footer(width: playerSize.width)
                 .padding(.top, playerSize.verticalSpacing)
+                .padding(.horizontal, ViewConst.playerCardPaddings)
         }
     }
 
@@ -114,6 +104,7 @@ private extension PlayerControls {
                 UIColor(red: 0.4, green: 0.4, blue: 0.6, alpha: 1.0)
             ].map { Color($0) }
         )
+        .overlay(Color(UIColor(white: 0.4, alpha: 0.5)))
         .ignoresSafeArea()
 
         PlayerControls()
