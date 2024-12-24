@@ -10,5 +10,5 @@ import Foundation
 enum ViewConst {}
 
 extension ViewConst {
-    static let playerCardPaddings: CGFloat = 25
+    static let playerCardPaddings: CGFloat = 32
 }

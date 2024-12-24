@@ -18,7 +18,7 @@ struct PlayerControls: View {
             VStack(spacing: 0) {
                 VStack(spacing: spacing) {
                     trackInfo
-                    let indicatorPadding = ViewConst.playerCardPaddings - RubberSliderConfig.playerControls.growth
+                    let indicatorPadding = ViewConst.playerCardPaddings - ElasticSliderConfig.playbackProgress.growth
                     TimingIndicator(spacing: spacing)
                         .padding(.top, spacing)
                         .padding(.horizontal, indicatorPadding)
@@ -52,10 +52,12 @@ private extension PlayerControls {
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(Color(palette.opaque))
+                    .id(model.display.title)
                 MarqueeText(model.display.subtitle ?? "", config: cfg)
                     .transformEffect(.identity)
-                    .foregroundColor(Color(palette.translucent))
+                    .foregroundColor(Color(palette.opaque))
                     .blendMode(.overlay)
+                    .id(model.display.subtitle)                    
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -91,22 +93,14 @@ private extension PlayerControls {
                     .font(.title2)
             }
         }
-        .foregroundColor(Color(palette.translucent))
+        .foregroundColor(Color(palette.opaque))
         .blendMode(.overlay)
     }
 }
 
 #Preview {
     ZStack(alignment: .bottom) {
-        ColorfulBackground(
-            colors: [
-                UIColor(red: 0.3, green: 0.4, blue: 0.3, alpha: 1.0),
-                UIColor(red: 0.4, green: 0.4, blue: 0.6, alpha: 1.0)
-            ].map { Color($0) }
-        )
-        .overlay(Color(UIColor(white: 0.4, alpha: 0.5)))
-        .ignoresSafeArea()
-
+        PreviewBackground()
         PlayerControls()
             .frame(height: 400)
     }

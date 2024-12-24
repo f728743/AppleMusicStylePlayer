@@ -9,33 +9,47 @@ import SwiftUI
 
 public struct VolumeSlider: View {
     @State var volume: Double = 0.5
+    @State var minVolumeAnimationTrigger: Bool = false
+    @State var maxVolumeAnimationTrigger: Bool = false
+    let range = 0.0 ... 1
 
     public var body: some View {
-        RubberSlider(
+        ElasticSlider(
             value: $volume,
-            in: 0 ... 1,
-            config: .volumeSlider,
+            in: range,
             leadingLabel: {
                 Image(systemName: "speaker.fill")
-                    .padding(.trailing, 4)
+                    .padding(.trailing, 10)
+                    .symbolEffect(.bounce, value: minVolumeAnimationTrigger)
             },
             trailingLabel: {
                 Image(systemName: "speaker.wave.3.fill")
-                    .padding(.leading, 4)
+                    .padding(.leading, 10)
+                    .symbolEffect(.bounce, value: maxVolumeAnimationTrigger)
             }
         )
+        .sliderStyle(.volume)
+        .font(.system(size: 14))
+        .onChange(of: volume) {
+            if volume == range.lowerBound {
+                minVolumeAnimationTrigger.toggle()
+            }
+            if volume == range.upperBound {
+                maxVolumeAnimationTrigger.toggle()
+            }
+        }
         .frame(height: 50)
     }
 }
 
-extension RubberSliderConfig {
-    static var volumeSlider: Self {
+extension ElasticSliderConfig {
+    static var volume: Self {
         Self(
             labelLocation: .side,
             maxStretch: 10,
             minimumTrackActiveColor: Color(Palette.PlayerCard.opaque),
             minimumTrackInactiveColor: Color(Palette.PlayerCard.translucent),
-            maximumTrackColor: Color(Palette.PlayerCard.transparent),
+            maximumTrackColor: Color(Palette.PlayerCard.translucent),
             blendMode: .overlay,
             syncLabelsStyle: true
         )
@@ -44,8 +58,7 @@ extension RubberSliderConfig {
 
 #Preview {
     ZStack {
-        ColorfulBackground(colors: [.indigo, .pink])
-            .overlay(Color(UIColor(white: 0.4, alpha: 0.5)))
+        PreviewBackground()
         VolumeSlider()
     }
     .ignoresSafeArea()

@@ -45,22 +45,15 @@ extension PlayerButton.Config {
     static var playerControls: Self {
         Self(
             labelColor: .init(Palette.PlayerCard.opaque),
-            tint: .init(Palette.PlayerCard.transparent),
-            pressedColor: .init(Palette.PlayerCard.translucent)
+            tint: .init(Palette.PlayerCard.translucent.withAlphaComponent(0.3)),
+            pressedColor: .init(Palette.PlayerCard.opaque)
         )
     }
 }
 
 #Preview {
     ZStack(alignment: .top) {
-        ColorfulBackground(
-            colors: [
-                UIColor(red: 0.3, green: 0.4, blue: 0.3, alpha: 1.0),
-                UIColor(red: 0.4, green: 0.4, blue: 0.6, alpha: 1.0)
-            ].map { Color($0) }
-        )
-        .ignoresSafeArea()
-
+        PreviewBackground()
         VStack {
             Text("Header")
                 .blendMode(.overlay)
@@ -68,13 +61,9 @@ extension PlayerButton.Config {
             Text("Footer")
                 .blendMode(.overlay)
         }
-        .foregroundColor(.init(Palette.PlayerCard.transparent))
+        .foregroundColor(.init(Palette.PlayerCard.opaque))
     }
-
     .environment(
-        PlayerController(
-            playList: PlayListController(),
-            player: Player()
-        )
+        PlayerController(playList: PlayListController(), player: Player())
     )
 }

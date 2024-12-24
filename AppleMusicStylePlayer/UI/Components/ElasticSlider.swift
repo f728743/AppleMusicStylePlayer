@@ -1,5 +1,5 @@
 //
-//  RubberSlider.swift
+//  ElasticSlider.swift
 //  AppleMusicStylePlayer
 //
 //  Created by Alexey Vorobyov on 13.12.2024.
@@ -7,41 +7,25 @@
 
 import SwiftUI
 
-struct RubberSliderConfig {
-    var labelLocation: LabelLocation = .side
-    var activeHeight: CGFloat = 17
-    var inactiveHeight: CGFloat = 7
-    var maxStretch: CGFloat = 20
-    var pushStretchRatio: CGFloat = 0.2
-    var pullStretchRatio: CGFloat = 0.5
-    var minimumTrackActiveColor: Color = .init(UIColor.tintColor)
-    var minimumTrackInactiveColor: Color = .init(UIColor.systemGray3)
-    var maximumTrackColor: Color = .init(UIColor.systemGray6)
-    var blendMode: BlendMode = .normal
-    var syncLabelsStyle: Bool = false
-}
-
-struct RubberSlider<LeadingContent: View, TrailingContent: View>: View {
+struct ElasticSlider<LeadingContent: View, TrailingContent: View>: View {
     @Binding private var value: Double
-    private var range: ClosedRange<Double>
-    private var config: RubberSliderConfig
+    private let range: ClosedRange<Double>
+    private let leadingLabel: LeadingContent?
+    private let trailingLabel: TrailingContent?
+    @Environment(\.elasticSliderConfig) var config
     @State private var lastStoredValue: CGFloat
     @State private var stretchingValue: CGFloat = 0
     @State private var viewSize: CGSize = .zero
     @GestureState private var isActive: Bool = false
-    let leadingLabel: LeadingContent?
-    let trailingLabel: TrailingContent?
 
     init(
         value: Binding<Double>,
         in range: ClosedRange<Double>,
-        config: RubberSliderConfig = .init(),
         leadingLabel: (() -> LeadingContent)? = nil,
         trailingLabel: (() -> TrailingContent)? = nil
     ) {
         _value = value
         self.range = range
-        self.config = config
         lastStoredValue = value.wrappedValue
         self.leadingLabel = leadingLabel?()
         self.trailingLabel = trailingLabel?()
@@ -55,19 +39,31 @@ struct RubberSlider<LeadingContent: View, TrailingContent: View>: View {
                 sideLabeledTrack
             }
         }
-        .animation(.snappy, value: isActive)
+        .animation(.smooth(duration: 0.3, extraBounce: 0.3), value: isActive)
+        .sensoryFeedback(.increase, trigger: isValueExtreme) { config.defaultSensoryFeedback && $1 }
     }
 }
 
-private extension RubberSlider {
+// MARK: private
+
+private extension ElasticSlider {
+    var isValueExtreme: Bool {
+        value == range.lowerBound || value == range.upperBound
+    }
+
     @ViewBuilder
     func styled<Content: View>(_ content: Content) -> some View {
         if config.syncLabelsStyle {
-            content
-                .animation(nil, value: isActive)
-                .transformEffect(.identity)
-                .foregroundColor(isActive ? config.minimumTrackActiveColor : config.minimumTrackInactiveColor)
-                .blendMode(isActive ? .normal : config.blendMode)
+            ZStack {
+                content
+                    .foregroundColor(config.maximumTrackColor)
+                    .blendMode(config.blendMode)
+                content
+                    .foregroundColor(isActive ? config.minimumTrackActiveColor : config.minimumTrackInactiveColor)
+            }
+            .animation(nil, value: isActive)
+            .blendMode(isActive ? .normal : config.blendMode)
+            .transformEffect(.identity)
         } else {
             content
         }
@@ -80,6 +76,7 @@ private extension RubberSlider {
                 let padding = (isActive ? 0 : config.growth) + config.maxStretch
                 styled(leadingLabel)
                     .padding(.leading, padding - leadingStretch)
+
                 Spacer()
                 styled(trailingLabel)
                     .padding(.trailing, padding - trailingStretch)
@@ -123,7 +120,7 @@ private extension RubberSlider {
             .preference(key: SizePreferenceKey.self, value: size)
             .frame(
                 height: isActive
-                    ? config.activeHeight - abs(normalizedStretchingValue) * config.growth
+                    ? config.activeHeight - abs(normalizedStretchingValue) * config.stretchNarrowing
                     : config.inactiveHeight
             )
             .padding(.horizontal, isActive ? 0 : config.growth)
@@ -157,7 +154,7 @@ private extension RubberSlider {
         }
         .frame(
             height: max(0, isActive
-                ? config.activeHeight - abs(normalizedStretchingValue) * config.growth
+                ? config.activeHeight - abs(normalizedStretchingValue) * config.stretchNarrowing
                 : config.inactiveHeight)
         )
     }
@@ -195,61 +192,123 @@ private extension RubberSlider {
     }
 }
 
-extension RubberSliderConfig {
-    enum LabelLocation {
-        case bottom
-        case side
-    }
+// MARK: Convenience initializers
 
-    var growth: CGFloat {
-        (activeHeight - inactiveHeight) / 2
-    }
-}
-
-extension RubberSlider where LeadingContent == EmptyView {
+extension ElasticSlider where LeadingContent == EmptyView {
     init(
         value: Binding<Double>,
         in range: ClosedRange<Double>,
-        config: RubberSliderConfig = .init(),
         trailingLabel: (() -> TrailingContent)? = nil
     ) {
         _value = value
         self.range = range
-        self.config = config
         lastStoredValue = value.wrappedValue
         leadingLabel = nil
         self.trailingLabel = trailingLabel?()
     }
 }
 
-extension RubberSlider where TrailingContent == EmptyView {
+extension ElasticSlider where TrailingContent == EmptyView {
     init(
         value: Binding<Double>,
         in range: ClosedRange<Double>,
-        config: RubberSliderConfig = .init(),
+        config _: ElasticSliderConfig = .init(),
         leadingLabel: (() -> LeadingContent)? = nil
     ) {
         _value = value
         self.range = range
-        self.config = config
         lastStoredValue = value.wrappedValue
         self.leadingLabel = leadingLabel?()
         trailingLabel = nil
     }
 }
 
-extension RubberSlider where LeadingContent == EmptyView, TrailingContent == EmptyView {
+extension ElasticSlider where LeadingContent == EmptyView, TrailingContent == EmptyView {
     init(
         value: Binding<Double>,
         in range: ClosedRange<Double>,
-        config: RubberSliderConfig = .init()
+        config _: ElasticSliderConfig = .init()
     ) {
         _value = value
         self.range = range
-        self.config = config
         lastStoredValue = value.wrappedValue
         leadingLabel = nil
         trailingLabel = nil
+    }
+}
+
+// MARK: config
+
+public struct ElasticSliderConfig {
+    public enum LabelLocation {
+        case bottom
+        case side
+    }
+
+    public let labelLocation: LabelLocation
+    public let activeHeight: CGFloat
+    public let inactiveHeight: CGFloat
+    public let growth: CGFloat
+    public let stretchNarrowing: CGFloat
+    public let maxStretch: CGFloat
+    public let pushStretchRatio: CGFloat
+    public let pullStretchRatio: CGFloat
+    public let minimumTrackActiveColor: Color
+    public let minimumTrackInactiveColor: Color
+    public let maximumTrackColor: Color
+    public let blendMode: BlendMode
+    public let syncLabelsStyle: Bool
+    public let defaultSensoryFeedback: Bool
+
+    public init(
+        labelLocation: ElasticSliderConfig.LabelLocation = .side,
+        activeHeight: CGFloat = 17,
+        inactiveHeight: CGFloat = 7,
+        growth: CGFloat = 9,
+        stretchNarrowing: CGFloat = 4,
+        maxStretch: CGFloat = 9,
+        pushStretchRatio: CGFloat = 0.2,
+        pullStretchRatio: CGFloat = 0.5,
+        minimumTrackActiveColor: Color = .init(UIColor.tintColor),
+        minimumTrackInactiveColor: Color = .init(UIColor.systemGray3),
+        maximumTrackColor: Color = .init(UIColor.systemGray6),
+        blendMode: BlendMode = .normal,
+        syncLabelsStyle: Bool = false,
+        defaultSensoryFeedback: Bool = true
+    ) {
+        self.labelLocation = labelLocation
+        self.activeHeight = activeHeight
+        self.inactiveHeight = inactiveHeight
+        self.growth = growth
+        self.stretchNarrowing = stretchNarrowing
+        self.maxStretch = maxStretch
+        self.pushStretchRatio = pushStretchRatio
+        self.pullStretchRatio = pullStretchRatio
+        self.minimumTrackActiveColor = minimumTrackActiveColor
+        self.minimumTrackInactiveColor = minimumTrackInactiveColor
+        self.maximumTrackColor = maximumTrackColor
+        self.blendMode = blendMode
+        self.syncLabelsStyle = syncLabelsStyle
+        self.defaultSensoryFeedback = defaultSensoryFeedback
+    }
+}
+
+// MARK: EnvironmentValues
+
+public extension View {
+    func sliderStyle(_ config: ElasticSliderConfig = .init()) -> some View {
+        environment(\.elasticSliderConfig, config)
+    }
+}
+
+private struct ElasticSliderConfigEnvironmentKey: EnvironmentKey {
+    static var defaultValue: ElasticSliderConfig = .init()
+}
+
+extension EnvironmentValues {
+    var elasticSliderConfig: ElasticSliderConfig {
+        get { self[ElasticSliderConfigEnvironmentKey.self] }
+        set { self[ElasticSliderConfigEnvironmentKey.self] = newValue }
     }
 }
 
@@ -258,10 +317,9 @@ extension RubberSlider where LeadingContent == EmptyView, TrailingContent == Emp
     @Previewable @State var volume: Double = 0.5
     let range = 0.0 ... 2
     VStack(spacing: 50) {
-        RubberSlider(
+        ElasticSlider(
             value: $progress,
             in: range,
-            config: .init(labelLocation: .bottom, maxStretch: 0),
             leadingLabel: {
                 Text(progress, format: .number.precision(.fractionLength(2)))
             },
@@ -272,13 +330,13 @@ extension RubberSlider where LeadingContent == EmptyView, TrailingContent == Emp
                 )
             }
         )
+        .sliderStyle(.init(labelLocation: .bottom, maxStretch: 0))
         .padding(.horizontal, 15)
         .frame(height: 50)
 
-        RubberSlider(
+        ElasticSlider(
             value: $volume,
             in: 0 ... 1,
-            config: .init(labelLocation: .side, syncLabelsStyle: true),
             leadingLabel: {
                 Image(systemName: "speaker.fill")
                     .padding(.trailing, 4)
@@ -288,6 +346,7 @@ extension RubberSlider where LeadingContent == EmptyView, TrailingContent == Emp
                     .padding(.leading, 4)
             }
         )
+        .sliderStyle(.init(labelLocation: .side, syncLabelsStyle: true))
         .frame(height: 50)
     }
 }

@@ -13,10 +13,9 @@ struct TimingIndicator: View {
     let range = 0.0 ... 194
 
     var body: some View {
-        RubberSlider(
+        ElasticSlider(
             value: $progress,
             in: range,
-            config: .playerControls,
             leadingLabel: {
                 label(leadingLabelText)
             },
@@ -24,6 +23,7 @@ struct TimingIndicator: View {
                 label(trailingLabelText)
             }
         )
+        .sliderStyle(.playbackProgress)
         .frame(height: 60)
         .transformEffect(.identity)
     }
@@ -32,8 +32,8 @@ struct TimingIndicator: View {
 private extension TimingIndicator {
     func label(_ text: String) -> some View {
         Text(text)
-            .font(.caption)
-            .padding(.top, 4)
+            .font(.system(size: 12, weight: .semibold))
+            .padding(.top, 11)
     }
 
     var leadingLabelText: String {
@@ -49,14 +49,14 @@ private extension TimingIndicator {
     }
 }
 
-extension RubberSliderConfig {
-    static var playerControls: Self {
+extension ElasticSliderConfig {
+    static var playbackProgress: Self {
         Self(
             labelLocation: .bottom,
             maxStretch: 0,
             minimumTrackActiveColor: Color(Palette.PlayerCard.opaque),
             minimumTrackInactiveColor: Color(Palette.PlayerCard.translucent),
-            maximumTrackColor: Color(Palette.PlayerCard.transparent),
+            maximumTrackColor: Color(Palette.PlayerCard.translucent),
             blendMode: .overlay,
             syncLabelsStyle: true
         )
@@ -65,12 +65,10 @@ extension RubberSliderConfig {
 
 #Preview {
     ZStack {
-        ColorfulBackground(colors: [.indigo, .pink])
-            .overlay(Color(UIColor(white: 0.4, alpha: 0.5)))
+        PreviewBackground()
         TimingIndicator(spacing: 10)
             .padding(.horizontal)
     }
-    .ignoresSafeArea()
 }
 
 extension BinaryFloatingPoint {

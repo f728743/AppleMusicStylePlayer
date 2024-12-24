@@ -78,6 +78,7 @@ struct PlayerButton: View {
                     onEnded?()
                 }
             )
+            .contentTransition(.symbolEffect(.replace))
     }
 
     struct Config {
