@@ -10,11 +10,15 @@ import SwiftUI
 
 struct MediaListView: View {
     @Environment(PlayListController.self) var model
+    @Environment(\.playerExpandProgress) var expandProgress
 
     var body: some View {
-        ScrollView {
-            content
-                .padding(.horizontal, 20)
+        VStack {
+            Text(String(format: "Expanded:  %.2f", expandProgress))
+            ScrollView {
+                content
+                    .padding(.horizontal, 20)
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ struct ExpandablePlayer: View {
     @State private var mainWindow: UIWindow?
     @State private var needRestoreProgressOnActive: Bool = false
     @State private var windowProgress: CGFloat = 0.0
+    @State private var trackedProgress: CGFloat = 0.0
     @Namespace private var animationNamespace
 
     var body: some View {
@@ -32,11 +33,7 @@ struct ExpandablePlayer: View {
             }
             .onChange(of: expandPlayer) {
                 if expandPlayer {
-                    mainWindow?.stacked(
-                        progress: 1,
-                        withAnimation: true,
-                        duration: Animation.playerExpandAnimationDuration
-                    )
+                    stacked(progress: 1, withAnimation: true)
                 }
             }
             .onReceive(appInactive) { _ in
@@ -81,6 +78,7 @@ private extension ExpandablePlayer {
                     animationNamespace: animationNamespace
                 )
                 .opacity(expandPlayer ? 1 : 0)
+                ProgressTracker(progress: trackedProgress)
             }
             .frame(height: expandPlayer ? nil : 55, alignment: .top)
             .frame(maxHeight: .infinity, alignment: .bottom)
@@ -116,7 +114,7 @@ private extension ExpandablePlayer {
         let translation = max(value.translation.height, 0)
         offsetY = translation
         windowProgress = max(min(translation / viewSize.height, 1), 0)
-        mainWindow?.stacked(progress: 1 - windowProgress)
+        stacked(progress: 1 - windowProgress, withAnimation: false)
     }
 
     func handleGestureEnd(value: PanGesture.Value, viewSize: CGSize) {
@@ -126,9 +124,9 @@ private extension ExpandablePlayer {
         withAnimation(.playerExpandAnimation) {
             if (translation + velocity) > (viewSize.height * 0.3) {
                 expandPlayer = false
-                mainWindow?.resetStackedWithAnimation(duration: Animation.playerExpandAnimationDuration)
+                resetStackedWithAnimation()
             } else {
-                mainWindow?.stacked(progress: 1, withAnimation: true, duration: Animation.playerExpandAnimationDuration)
+                stacked(progress: 1, withAnimation: true)
             }
             offsetY = 0
         }
@@ -137,11 +135,33 @@ private extension ExpandablePlayer {
     func handeApp(active: Bool) {
         guard expandPlayer else { return }
         if active, needRestoreProgressOnActive {
-            mainWindow?.stacked(progress: 1, withAnimation: false, duration: nil)
+            stacked(progress: 1, withAnimation: false)
         } else {
             needRestoreProgressOnActive = true
             mainWindow?.transform = .identity
         }
+    }
+
+    func stacked(progress: CGFloat, withAnimation: Bool) {
+        if withAnimation {
+            SwiftUI.withAnimation(.playerExpandAnimation) {
+                trackedProgress = progress
+            }
+        } else {
+            trackedProgress = progress
+        }
+
+        mainWindow?.stacked(
+            progress: progress,
+            animationDuration: withAnimation ? Animation.playerExpandAnimationDuration : nil
+        )
+    }
+
+    func resetStackedWithAnimation() {
+        withAnimation(.playerExpandAnimation) {
+            trackedProgress = 0
+        }
+        mainWindow?.resetStackedWithAnimation(duration: Animation.playerExpandAnimationDuration)
     }
 }
 
@@ -152,10 +172,25 @@ extension Animation {
     }
 }
 
+private struct ProgressTracker: View, Animatable {
+    var progress: CGFloat = 0
+
+    var animatableData: CGFloat {
+        get { progress }
+        set { progress = newValue }
+    }
+
+    var body: some View {
+        Color.clear
+            .frame(width: 1, height: 1)
+            .preference(key: PlayerExpandProgressPreferenceKey.self, value: progress)
+    }
+}
+
 private extension UIWindow {
-    func stacked(progress: CGFloat, withAnimation: Bool, duration: TimeInterval?) {
-        if withAnimation, let duration {
-            UIView.animate(withDuration: duration) {
+    func stacked(progress: CGFloat, animationDuration: TimeInterval?) {
+        if let animationDuration {
+            UIView.animate(withDuration: animationDuration) {
                 self.stacked(progress: progress)
             }
         } else {
@@ -163,7 +198,7 @@ private extension UIWindow {
         }
     }
 
-    func stacked(progress: CGFloat) {
+    private func stacked(progress: CGFloat) {
         let offsetY = progress * 10
         layer.cornerRadius = 22
         layer.masksToBounds = true

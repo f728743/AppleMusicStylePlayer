@@ -57,7 +57,7 @@ private extension PlayerControls {
                     .transformEffect(.identity)
                     .foregroundColor(Color(palette.opaque))
                     .blendMode(.overlay)
-                    .id(model.display.subtitle)                    
+                    .id(model.display.subtitle)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

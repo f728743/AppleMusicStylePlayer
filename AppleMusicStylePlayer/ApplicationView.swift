@@ -9,8 +9,9 @@ import SwiftUI
 
 struct ApplicationView: View {
     @State private var showMiniPlayer: Bool = false
-    @State var playlistController: PlayListController
-    @State var playerController: PlayerController
+    @State private var playlistController: PlayListController
+    @State private var playerController: PlayerController
+    @State private var playerExpandProgress: CGFloat = .zero
 
     init() {
         let playlistController = PlayListController()
@@ -28,7 +29,11 @@ struct ApplicationView: View {
             .universalOverlay(show: $showMiniPlayer) {
                 ExpandablePlayer(show: $showMiniPlayer)
                     .environment(playerController)
+                    .onPreferenceChange(PlayerExpandProgressPreferenceKey.self) { value in
+                        playerExpandProgress = value
+                    }
             }
+            .environment(\.playerExpandProgress, playerExpandProgress)
             .onAppear {
                 showMiniPlayer = true
             }
