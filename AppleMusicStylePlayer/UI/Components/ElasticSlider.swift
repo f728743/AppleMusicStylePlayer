@@ -239,28 +239,28 @@ extension ElasticSlider where LeadingContent == EmptyView, TrailingContent == Em
 
 // MARK: config
 
-public struct ElasticSliderConfig {
-    public enum LabelLocation {
+struct ElasticSliderConfig {
+    enum LabelLocation {
         case bottom
         case side
     }
 
-    public let labelLocation: LabelLocation
-    public let activeHeight: CGFloat
-    public let inactiveHeight: CGFloat
-    public let growth: CGFloat
-    public let stretchNarrowing: CGFloat
-    public let maxStretch: CGFloat
-    public let pushStretchRatio: CGFloat
-    public let pullStretchRatio: CGFloat
-    public let minimumTrackActiveColor: Color
-    public let minimumTrackInactiveColor: Color
-    public let maximumTrackColor: Color
-    public let blendMode: BlendMode
-    public let syncLabelsStyle: Bool
-    public let defaultSensoryFeedback: Bool
+    let labelLocation: LabelLocation
+    let activeHeight: CGFloat
+    let inactiveHeight: CGFloat
+    let growth: CGFloat
+    let stretchNarrowing: CGFloat
+    let maxStretch: CGFloat
+    let pushStretchRatio: CGFloat
+    let pullStretchRatio: CGFloat
+    let minimumTrackActiveColor: Color
+    let minimumTrackInactiveColor: Color
+    let maximumTrackColor: Color
+    let blendMode: BlendMode
+    let syncLabelsStyle: Bool
+    let defaultSensoryFeedback: Bool
 
-    public init(
+    init(
         labelLocation: ElasticSliderConfig.LabelLocation = .side,
         activeHeight: CGFloat = 17,
         inactiveHeight: CGFloat = 7,
@@ -295,8 +295,8 @@ public struct ElasticSliderConfig {
 
 // MARK: EnvironmentValues
 
-public extension View {
-    func sliderStyle(_ config: ElasticSliderConfig = .init()) -> some View {
+extension View {
+    func sliderStyle(_ config: ElasticSliderConfig) -> some View {
         environment(\.elasticSliderConfig, config)
     }
 }

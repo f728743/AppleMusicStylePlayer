@@ -24,7 +24,7 @@ struct PlayerControls: View {
                         .padding(.horizontal, indicatorPadding)
                 }
                 .frame(height: size.height / 2.5, alignment: .top)
-                PlayerButtons(playerSize: size)
+                PlayerButtons(spacing: size.width * 0.14)
                     .padding(.horizontal, ViewConst.playerCardPaddings)
                 volume(playerSize: size)
                     .frame(height: size.height / 2.5, alignment: .bottom)

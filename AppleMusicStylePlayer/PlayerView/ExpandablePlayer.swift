@@ -45,7 +45,6 @@ struct ExpandablePlayer: View {
             .onPreferenceChange(PlayerExpandProgressPreferenceKey.self) { value in
                 playerExpandProgress = value
             }
-
     }
 }
 
@@ -53,7 +52,7 @@ private extension ExpandablePlayer {
     var isFullExpanded: Bool {
         playerExpandProgress >= 1
     }
-    
+
     var appInactive: NotificationCenter.Publisher {
         NotificationCenter
             .default

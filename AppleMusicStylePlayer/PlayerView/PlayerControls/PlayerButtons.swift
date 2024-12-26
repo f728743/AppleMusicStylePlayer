@@ -9,13 +9,12 @@ import SwiftUI
 
 struct PlayerButtons: View {
     @Environment(PlayerController.self) var model
-    let playerSize: CGSize
+    let spacing: CGFloat
 
     var body: some View {
-        HStack(spacing: playerSize.width * 0.14) {
+        HStack(spacing: spacing) {
             PlayerButton(
                 model.backwardButton,
-                config: .playerControls,
                 onEnded: {
                     model.onBackward()
                 }
@@ -23,7 +22,6 @@ struct PlayerButtons: View {
 
             PlayerButton(
                 model.playPauseButton,
-                config: .playerControls,
                 onEnded: {
                     model.onPlayPause()
                 }
@@ -31,18 +29,18 @@ struct PlayerButtons: View {
 
             PlayerButton(
                 model.forwardButton,
-                config: .playerControls,
                 onEnded: {
                     model.onForward()
                 }
             )
         }
+        .playerButtonStyle(.expandedPlayer)
         .foregroundColor(.white)
     }
 }
 
-extension PlayerButton.Config {
-    static var playerControls: Self {
+extension PlayerButtonConfig {
+    static var expandedPlayer: Self {
         Self(
             labelColor: .init(Palette.PlayerCard.opaque),
             tint: .init(Palette.PlayerCard.translucent.withAlphaComponent(0.3)),
@@ -57,7 +55,7 @@ extension PlayerButton.Config {
         VStack {
             Text("Header")
                 .blendMode(.overlay)
-            PlayerButtons(playerSize: UIScreen.main.bounds.size)
+            PlayerButtons(spacing: UIScreen.main.bounds.size.width * 0.14)
             Text("Footer")
                 .blendMode(.overlay)
         }
