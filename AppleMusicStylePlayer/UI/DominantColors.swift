@@ -125,10 +125,10 @@ extension UIImage {
             let percentage = (Double($0.count) / Double(totalDominantColors))
             return ColorFrequency(
                 color: UIColor(
-                    red: $0.color.rgb.r,
-                    green: $0.color.rgb.g,
-                    blue: $0.color.rgb.b,
-                    alpha: 255
+                    r: $0.color.rgb.r,
+                    g: $0.color.rgb.g,
+                    b: $0.color.rgb.b,
+                    a: 255
                 ),
                 frequency: percentage
             )

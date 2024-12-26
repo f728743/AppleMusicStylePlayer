@@ -31,4 +31,5 @@ struct ApplicationTabView: View {
 
 #Preview {
     ApplicationTabView()
+        .environment(PlayListController())
 }

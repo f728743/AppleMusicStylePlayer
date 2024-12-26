@@ -19,7 +19,8 @@ struct ExpandablePlayer: View {
     @State private var mainWindow: UIWindow?
     @State private var needRestoreProgressOnActive: Bool = false
     @State private var windowProgress: CGFloat = 0.0
-    @State private var trackedProgress: CGFloat = 0.0
+    @State private var progressTrackState: CGFloat = 0.0
+    @State private var playerExpandProgress: CGFloat = 0.0
     @Namespace private var animationNamespace
 
     var body: some View {
@@ -27,7 +28,6 @@ struct ExpandablePlayer: View {
             .onAppear {
                 if let window = UIApplication.keyWindow {
                     mainWindow = window
-                    mainWindow?.backgroundColor = .green
                 }
                 model.onAppear()
             }
@@ -42,10 +42,18 @@ struct ExpandablePlayer: View {
             .onReceive(appActive) { _ in
                 handeApp(active: true)
             }
+            .onPreferenceChange(PlayerExpandProgressPreferenceKey.self) { value in
+                playerExpandProgress = value
+            }
+
     }
 }
 
 private extension ExpandablePlayer {
+    var isFullExpanded: Bool {
+        playerExpandProgress >= 1
+    }
+    
     var appInactive: NotificationCenter.Publisher {
         NotificationCenter
             .default
@@ -78,7 +86,7 @@ private extension ExpandablePlayer {
                     animationNamespace: animationNamespace
                 )
                 .opacity(expandPlayer ? 1 : 0)
-                ProgressTracker(progress: trackedProgress)
+                ProgressTracker(progress: progressTrackState)
             }
             .frame(height: expandPlayer ? nil : 55, alignment: .top)
             .frame(maxHeight: .infinity, alignment: .bottom)
@@ -96,14 +104,15 @@ private extension ExpandablePlayer {
     }
 
     func background(colors: [UIColor]) -> some View {
-        ZStack {
+        let expandPlayerCornerRadius = (isFullExpanded ? 0 : UIScreen.DeviceCornerRadius)
+        return ZStack {
             Rectangle()
                 .fill(.ultraThinMaterial)
             ColorfulBackground(colors: model.colors.map { Color($0.color) })
                 .overlay(Color(UIColor(white: 0.4, alpha: 0.5)))
                 .opacity(expandPlayer ? 1 : 0)
         }
-        .clipShape(.rect(cornerRadius: expandPlayer ? UIScreen.DeviceCornerRadius : 15))
+        .clipShape(.rect(cornerRadius: expandPlayer ? expandPlayerCornerRadius : 15))
         .frame(height: expandPlayer ? nil : 55)
         .shadow(color: .primary.opacity(0.06), radius: 5, x: 5, y: 5)
         .shadow(color: .primary.opacity(0.05), radius: 5, x: -5, y: -5)
@@ -145,10 +154,10 @@ private extension ExpandablePlayer {
     func stacked(progress: CGFloat, withAnimation: Bool) {
         if withAnimation {
             SwiftUI.withAnimation(.playerExpandAnimation) {
-                trackedProgress = progress
+                progressTrackState = progress
             }
         } else {
-            trackedProgress = progress
+            progressTrackState = progress
         }
 
         mainWindow?.stacked(
@@ -159,7 +168,7 @@ private extension ExpandablePlayer {
 
     func resetStackedWithAnimation() {
         withAnimation(.playerExpandAnimation) {
-            trackedProgress = 0
+            progressTrackState = 0
         }
         mainWindow?.resetStackedWithAnimation(duration: Animation.playerExpandAnimationDuration)
     }

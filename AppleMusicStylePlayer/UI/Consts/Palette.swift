@@ -14,9 +14,22 @@ enum Palette {
 extension Palette {
     static let taupeGray = UIColor(red: 0.525, green: 0.525, blue: 0.545, alpha: 1)
     static let platinum = UIColor(red: 0.898, green: 0.898, blue: 0.913, alpha: 1)
-
     static var playerCard: Palette.PlayerCard.Type {
         Palette.PlayerCard.self
+    }
+
+    static let appBackground: UIColor = .dynamic(
+        light: .white,
+        dark: .black
+    )
+
+    static let appStackedBackground: UIColor = .dynamic(
+        light: .white,
+        dark: UIColor(red: 0.0784, green: 0.0784, blue: 0.086, alpha: 1)
+    )
+
+    static func appBackground(expandProgress: CGFloat) -> UIColor {
+        lerp(appBackground, appStackedBackground, expandProgress) ?? appBackground
     }
 }
 
@@ -33,4 +46,29 @@ extension UIColor {
     static var palette: Palette.Type {
         Palette.self
     }
+}
+
+@inline(__always)
+func lerp<V: BinaryFloatingPoint, T: BinaryFloatingPoint>(_ v0: V, _ v1: V, _ t: T) -> V {
+    return v0 + V(t) * (v1 - v0)
+}
+
+func lerp<T: BinaryFloatingPoint>(_ v0: UIColor, _ v1: UIColor, _ t: T) -> UIColor? {
+    var red0: CGFloat = 0
+    var green0: CGFloat = 0
+    var blue0: CGFloat = 0
+    var alpha0: CGFloat = 0
+    var red1: CGFloat = 0
+    var green1: CGFloat = 0
+    var blue1: CGFloat = 0
+    var alpha1: CGFloat = 0
+
+    v0.getRed(&red0, green: &green0, blue: &blue0, alpha: &alpha0)
+    v1.getRed(&red1, green: &green1, blue: &blue1, alpha: &alpha1)
+    return UIColor(
+        red: lerp(red0, red1, t),
+        green: lerp(green0, green1, t),
+        blue: lerp(blue0, blue1, t),
+        alpha: lerp(alpha0, alpha1, t)
+    )
 }

@@ -8,12 +8,12 @@
 import UIKit
 
 extension UIColor {
-    convenience init(red: UInt8, green: UInt8, blue: UInt8, alpha: UInt8) {
+    convenience init(r: UInt8, g: UInt8, b: UInt8, a: UInt8) {
         self.init(
-            red: CGFloat(red) / 255,
-            green: CGFloat(green) / 255,
-            blue: CGFloat(blue) / 255,
-            alpha: CGFloat(alpha) / 255
+            red: CGFloat(r) / 255,
+            green: CGFloat(g) / 255,
+            blue: CGFloat(b) / 255,
+            alpha: CGFloat(a) / 255
         )
     }
 

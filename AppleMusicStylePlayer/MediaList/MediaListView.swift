@@ -13,13 +13,11 @@ struct MediaListView: View {
     @Environment(\.playerExpandProgress) var expandProgress
 
     var body: some View {
-        VStack {
-            Text(String(format: "Expanded:  %.2f", expandProgress))
-            ScrollView {
-                content
-                    .padding(.horizontal, 20)
-            }
+        ScrollView {
+            content
+                .padding(.horizontal, 20)
         }
+        .background(Color(.palette.appBackground(expandProgress: expandProgress)))
     }
 }
 
