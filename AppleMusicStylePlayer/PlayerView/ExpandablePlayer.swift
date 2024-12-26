@@ -21,6 +21,7 @@ struct ExpandablePlayer: View {
     @State private var windowProgress: CGFloat = 0.0
     @State private var progressTrackState: CGFloat = 0.0
     @State private var playerExpandProgress: CGFloat = 0.0
+    @Environment(\.colorScheme) var colorScheme
     @Namespace private var animationNamespace
 
     var body: some View {
@@ -89,8 +90,8 @@ private extension ExpandablePlayer {
             }
             .frame(height: expandPlayer ? nil : 55, alignment: .top)
             .frame(maxHeight: .infinity, alignment: .bottom)
-            .padding(.bottom, expandPlayer ? 0 : safeArea.bottom + 55)
-            .padding(.horizontal, expandPlayer ? 0 : 15)
+            .padding(.bottom, expandPlayer ? 0 : safeArea.bottom + 56)
+            .padding(.horizontal, expandPlayer ? 0 : 12)
             .offset(y: offsetY)
             .gesture(
                 PanGesture(
@@ -106,15 +107,19 @@ private extension ExpandablePlayer {
         let expandPlayerCornerRadius = (isFullExpanded ? 0 : UIScreen.DeviceCornerRadius)
         return ZStack {
             Rectangle()
-                .fill(.ultraThinMaterial)
+                .fill(.thickMaterial)
             ColorfulBackground(colors: model.colors.map { Color($0.color) })
                 .overlay(Color(UIColor(white: 0.4, alpha: 0.5)))
                 .opacity(expandPlayer ? 1 : 0)
         }
-        .clipShape(.rect(cornerRadius: expandPlayer ? expandPlayerCornerRadius : 15))
-        .frame(height: expandPlayer ? nil : 55)
-        .shadow(color: .primary.opacity(0.06), radius: 5, x: 5, y: 5)
-        .shadow(color: .primary.opacity(0.05), radius: 5, x: -5, y: -5)
+        .clipShape(.rect(cornerRadius: expandPlayer ? expandPlayerCornerRadius : 14))
+        .frame(height: expandPlayer ? nil : 56)
+        .shadow(
+            color: .primary.opacity(colorScheme == .light ? 0.2 : 0),
+            radius: 8,
+            x: 0,
+            y: 2
+        )
     }
 
     func handleGestureChange(value: PanGesture.Value, viewSize: CGSize) {

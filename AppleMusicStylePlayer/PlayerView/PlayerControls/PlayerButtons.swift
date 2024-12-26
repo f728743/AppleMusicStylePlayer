@@ -35,7 +35,6 @@ struct PlayerButtons: View {
             )
         }
         .playerButtonStyle(.expandedPlayer)
-        .foregroundColor(.white)
     }
 }
 
