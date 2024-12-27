@@ -24,8 +24,8 @@ extension Palette {
     static func appBackground(expandProgress: CGFloat) -> UIColor {
         UIColor {
             $0.userInterfaceStyle == .light
-            ? .white
-            : lerp(.black, .palette.stackedDarkBackground, expandProgress) ?? .black
+                ? .white
+                : lerp(.black, .palette.stackedDarkBackground, expandProgress) ?? .black
         }
     }
 }

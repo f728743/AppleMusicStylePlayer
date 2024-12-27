@@ -1,5 +1,5 @@
 //
-//  PlayerController.swift
+//  NowPlayingController.swift
 //  AppleMusicStylePlayer
 //
 //  Created by Alexey Vorobyov on 27.11.2024.
@@ -10,7 +10,7 @@ import Observation
 import UIKit
 
 @Observable
-class PlayerController {
+class NowPlayingController {
     enum State {
         case playing
         case paused
@@ -105,7 +105,7 @@ class PlayerController {
     }
 }
 
-private extension PlayerController {
+private extension NowPlayingController {
     func enshureMediaAvailable() {
         if playList.items.isEmpty {
             selectFirstAvailableMedia()
@@ -137,7 +137,7 @@ private extension PlayerController {
     }
 }
 
-private extension PlayerController.State {
+private extension NowPlayingController.State {
     mutating func toggle() {
         switch self {
         case .playing: self = .paused

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct MediaListView: View {
     @Environment(PlayListController.self) var model
-    @Environment(\.playerExpandProgress) var expandProgress
+    @Environment(\.nowPlayingExpandProgress) var expandProgress
 
     var body: some View {
         ScrollView {

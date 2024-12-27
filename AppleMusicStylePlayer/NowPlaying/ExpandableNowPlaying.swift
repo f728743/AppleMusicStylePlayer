@@ -1,5 +1,5 @@
 //
-//  ExpandablePlayer.swift
+//  ExpandableNowPlaying.swift
 //  AppleMusicStylePlayer
 //
 //  Created by Alexey Vorobyov on 17.11.2024.
@@ -11,21 +11,21 @@ enum PlayerMatchedGeometry {
     case artwork
 }
 
-struct ExpandablePlayer: View {
+struct ExpandableNowPlaying: View {
     @Binding var show: Bool
-    @Environment(PlayerController.self) var model
+    @Environment(NowPlayingController.self) var model
     @State private var expandPlayer: Bool = false
     @State private var offsetY: CGFloat = 0.0
     @State private var mainWindow: UIWindow?
     @State private var needRestoreProgressOnActive: Bool = false
     @State private var windowProgress: CGFloat = 0.0
     @State private var progressTrackState: CGFloat = 0.0
-    @State private var playerExpandProgress: CGFloat = 0.0
+    @State private var expandProgress: CGFloat = 0.0
     @Environment(\.colorScheme) var colorScheme
     @Namespace private var animationNamespace
 
     var body: some View {
-        expandablePlayer
+        expandableNowPlaying
             .onAppear {
                 if let window = UIApplication.keyWindow {
                     mainWindow = window
@@ -43,15 +43,15 @@ struct ExpandablePlayer: View {
             .onReceive(appActive) { _ in
                 handeApp(active: true)
             }
-            .onPreferenceChange(PlayerExpandProgressPreferenceKey.self) { value in
-                playerExpandProgress = value
+            .onPreferenceChange(NowPlayingExpandProgressPreferenceKey.self) { value in
+                expandProgress = value
             }
     }
 }
 
-private extension ExpandablePlayer {
+private extension ExpandableNowPlaying {
     var isFullExpanded: Bool {
-        playerExpandProgress >= 1
+        expandProgress >= 1
     }
 
     var appInactive: NotificationCenter.Publisher {
@@ -66,20 +66,20 @@ private extension ExpandablePlayer {
             .publisher(for: UIApplication.didBecomeActiveNotification)
     }
 
-    var expandablePlayer: some View {
+    var expandableNowPlaying: some View {
         GeometryReader {
             let size = $0.size
             let safeArea = $0.safeAreaInsets
 
             ZStack(alignment: .top) {
                 background(colors: model.colors.map { $0.color })
-                MiniPlayer(
+                CompactNowPlaying(
                     expanded: $expandPlayer,
                     animationNamespace: animationNamespace
                 )
                 .opacity(expandPlayer ? 0 : 1)
 
-                ExpandedPlayer(
+                RegularNowPlaying(
                     expanded: $expandPlayer,
                     size: size,
                     safeArea: safeArea,
@@ -196,7 +196,7 @@ private struct ProgressTracker: View, Animatable {
     var body: some View {
         Color.clear
             .frame(width: 1, height: 1)
-            .preference(key: PlayerExpandProgressPreferenceKey.self, value: progress)
+            .preference(key: NowPlayingExpandProgressPreferenceKey.self, value: progress)
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  ExpandedPlayer.swift
+//  RegularNowPlaying.swift
 //  AppleMusicStylePlayer
 //
 //  Created by Alexey Vorobyov on 20.11.2024.
@@ -8,8 +8,8 @@
 import Kingfisher
 import SwiftUI
 
-struct ExpandedPlayer: View {
-    @Environment(PlayerController.self) var model
+struct RegularNowPlaying: View {
+    @Environment(NowPlayingController.self) var model
     @Binding var expanded: Bool
     var size: CGSize
     var safeArea: EdgeInsets
@@ -40,7 +40,7 @@ struct ExpandedPlayer: View {
     }
 }
 
-private extension ExpandedPlayer {
+private extension RegularNowPlaying {
     enum Const {
         static let horizontalPadding: CGFloat = 25
     }
@@ -73,12 +73,12 @@ private extension ExpandedPlayer {
 }
 
 #Preview {
-    @Previewable @State var model = PlayerController(
+    @Previewable @State var model = NowPlayingController(
         playList: PlayListController(),
         player: Player()
     )
 
-    ExpandedPlayer(
+    RegularNowPlaying(
         expanded: .constant(true),
         size: UIScreen.main.bounds.size,
         safeArea: (UIApplication.keyWindow?.safeAreaInsets ?? .zero).edgeInsets,

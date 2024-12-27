@@ -7,20 +7,20 @@
 
 import SwiftUI
 
-struct PlayerExpandProgressPreferenceKey: PreferenceKey {
+struct NowPlayingExpandProgressPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = .zero
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }
 }
 
-private struct PlayerExpandProgressEnvironmentKey: EnvironmentKey {
+private struct NowPlayingExpandProgressEnvironmentKey: EnvironmentKey {
     static var defaultValue: Double = .zero
 }
 
 extension EnvironmentValues {
-    var playerExpandProgress: CGFloat {
-        get { self[PlayerExpandProgressEnvironmentKey.self] }
-        set { self[PlayerExpandProgressEnvironmentKey.self] = newValue }
+    var nowPlayingExpandProgress: CGFloat {
+        get { self[NowPlayingExpandProgressEnvironmentKey.self] }
+        set { self[NowPlayingExpandProgressEnvironmentKey.self] = newValue }
     }
 }

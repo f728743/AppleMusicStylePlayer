@@ -1,5 +1,5 @@
 //
-//  MiniPlayer.swift
+//  CompactNowPlaying.swift
 //  AppleMusicStylePlayer
 //
 //  Created by Alexey Vorobyov on 20.11.2024.
@@ -8,8 +8,8 @@
 import Kingfisher
 import SwiftUI
 
-struct MiniPlayer: View {
-    @Environment(PlayerController.self) var model
+struct CompactNowPlaying: View {
+    @Environment(NowPlayingController.self) var model
     @Binding var expanded: Bool
     var animationNamespace: Namespace.ID
 
@@ -17,31 +17,31 @@ struct MiniPlayer: View {
         HStack(spacing: 8) {
             artwork
                 .frame(width: 40, height: 40)
-            
+
             Text(model.title)
                 .lineLimit(1)
                 .text(style: .miniPlayerTitle)
                 .padding(.trailing, -18)
-            
+
             Spacer(minLength: 0)
 
-                PlayerButton(
-                    model.playPauseButton,
-                    onEnded: {
-                        model.onPlayPause()
-                    }
-                )
-                .playerButtonStyle(.miniPlayer(imageSize: 20))
-                
-                PlayerButton(
-                    model.forwardButton,
-                    onEnded: {
-                        model.onForward()
-                    }
-                )
-                .playerButtonStyle(.miniPlayer(imageSize: 30))
+            PlayerButton(
+                model.playPauseButton,
+                onEnded: {
+                    model.onPlayPause()
+                }
+            )
+            .playerButtonStyle(.miniPlayer(imageSize: 20))
+
+            PlayerButton(
+                model.forwardButton,
+                onEnded: {
+                    model.onForward()
+                }
+            )
+            .playerButtonStyle(.miniPlayer(imageSize: 30))
         }
-        
+
         .padding(.horizontal, 8)
         .frame(height: 56)
         .contentShape(.rect)
@@ -54,7 +54,7 @@ struct MiniPlayer: View {
     }
 }
 
-private extension MiniPlayer {
+private extension CompactNowPlaying {
     @ViewBuilder
     var artwork: some View {
         if !expanded {
@@ -82,13 +82,13 @@ extension PlayerButtonConfig {
 }
 
 #Preview {
-    MiniPlayer(
+    CompactNowPlaying(
         expanded: .constant(false),
         animationNamespace: Namespace().wrappedValue
     )
     .background(.gray)
     .environment(
-        PlayerController(
+        NowPlayingController(
             playList: PlayListController(),
             player: Player()
         )

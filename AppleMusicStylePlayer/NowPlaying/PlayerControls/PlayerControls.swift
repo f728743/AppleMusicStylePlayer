@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlayerControls: View {
-    @Environment(PlayerController.self) var model
+    @Environment(NowPlayingController.self) var model
     @State private var volume: Double = 0.5
 
     var body: some View {
@@ -106,7 +106,7 @@ private extension PlayerControls {
     }
 
     .environment(
-        PlayerController(
+        NowPlayingController(
             playList: PlayListController(),
             player: Player()
         )

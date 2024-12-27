@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlayerButtons: View {
-    @Environment(PlayerController.self) var model
+    @Environment(NowPlayingController.self) var model
     let spacing: CGFloat
 
     var body: some View {
@@ -61,6 +61,6 @@ extension PlayerButtonConfig {
         .foregroundColor(.init(Palette.PlayerCard.opaque))
     }
     .environment(
-        PlayerController(playList: PlayListController(), player: Player())
+        NowPlayingController(playList: PlayListController(), player: Player())
     )
 }
