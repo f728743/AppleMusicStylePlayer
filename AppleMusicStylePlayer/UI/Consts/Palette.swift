@@ -12,8 +12,6 @@ enum Palette {
 }
 
 extension Palette {
-    static let taupeGray = UIColor(red: 0.525, green: 0.525, blue: 0.545, alpha: 1)
-    static let platinum = UIColor(red: 0.898, green: 0.898, blue: 0.913, alpha: 1)
     static var playerCard: Palette.PlayerCard.Type {
         Palette.PlayerCard.self
     }
@@ -23,13 +21,12 @@ extension Palette {
         dark: .black
     )
 
-    static let appStackedBackground: UIColor = .dynamic(
-        light: .white,
-        dark: UIColor(red: 0.0784, green: 0.0784, blue: 0.086, alpha: 1)
-    )
-
     static func appBackground(expandProgress: CGFloat) -> UIColor {
-        lerp(appBackground, appStackedBackground, expandProgress) ?? appBackground
+        UIColor {
+            $0.userInterfaceStyle == .light
+            ? .white
+            : lerp(.black, .palette.stackedDarkBackground, expandProgress) ?? .black
+        }
     }
 }
 
@@ -40,6 +37,12 @@ extension Palette.PlayerCard {
         light: Palette.platinum,
         dark: Palette.taupeGray
     )
+}
+
+private extension Palette {
+    static let taupeGray = UIColor(red: 0.525, green: 0.525, blue: 0.545, alpha: 1)
+    static let platinum = UIColor(red: 0.898, green: 0.898, blue: 0.913, alpha: 1)
+    static let stackedDarkBackground = UIColor(red: 0.0784, green: 0.0784, blue: 0.086, alpha: 1)
 }
 
 extension UIColor {
