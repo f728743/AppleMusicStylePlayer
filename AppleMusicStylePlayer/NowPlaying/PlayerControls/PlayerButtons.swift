@@ -10,26 +10,45 @@ import SwiftUI
 struct PlayerButtons: View {
     @Environment(NowPlayingController.self) var model
     let spacing: CGFloat
+    let imageSize: CGFloat = 34
+    @State var backwardAnimationTrigger: PlayerButtonTrigger = .one(bouncing: false)
+    @State var forwardAnimationTrigger: PlayerButtonTrigger = .one(bouncing: false)
 
     var body: some View {
         HStack(spacing: spacing) {
             PlayerButton(
-                model.backwardButton,
+                label: {
+                    PlayerButtonLabel(
+                        type: model.backwardButton,
+                        size: imageSize,
+                        animationTrigger: backwardAnimationTrigger
+                    )
+                },
                 onEnded: {
+                    backwardAnimationTrigger.toggle(bouncing: true)
                     model.onBackward()
                 }
             )
 
             PlayerButton(
-                model.playPauseButton,
+                label: {
+                    PlayerButtonLabel(type: model.playPauseButton, size: imageSize)
+                },
                 onEnded: {
                     model.onPlayPause()
                 }
             )
 
             PlayerButton(
-                model.forwardButton,
+                label: {
+                    PlayerButtonLabel(
+                        type: model.forwardButton,
+                        size: imageSize,
+                        animationTrigger: forwardAnimationTrigger
+                    )
+                },
                 onEnded: {
+                    forwardAnimationTrigger.toggle(bouncing: true)
                     model.onForward()
                 }
             )

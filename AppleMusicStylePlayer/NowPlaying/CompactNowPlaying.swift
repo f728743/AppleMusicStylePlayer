@@ -26,20 +26,24 @@ struct CompactNowPlaying: View {
             Spacer(minLength: 0)
 
             PlayerButton(
-                model.playPauseButton,
+                label: {
+                    PlayerButtonLabel(type: model.playPauseButton, size: 20)
+                },
                 onEnded: {
                     model.onPlayPause()
                 }
             )
-            .playerButtonStyle(.miniPlayer(imageSize: 20))
+            .playerButtonStyle(.miniPlayer)
 
             PlayerButton(
-                model.forwardButton,
+                label: {
+                    PlayerButtonLabel(type: model.forwardButton, size: 30)
+                },
                 onEnded: {
                     model.onForward()
                 }
             )
-            .playerButtonStyle(.miniPlayer(imageSize: 30))
+            .playerButtonStyle(.miniPlayer)
         }
 
         .padding(.horizontal, 8)
@@ -72,10 +76,9 @@ private extension CompactNowPlaying {
 }
 
 extension PlayerButtonConfig {
-    static func miniPlayer(imageSize: CGFloat) -> Self {
+    static var miniPlayer: Self {
         Self(
-            imageSize: imageSize,
-            circleSize: 44,
+            size: 44,
             tint: .init(Palette.PlayerCard.translucent.withAlphaComponent(0.3))
         )
     }

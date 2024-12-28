@@ -104,7 +104,6 @@ private extension PlayerControls {
         PlayerControls()
             .frame(height: 400)
     }
-
     .environment(
         NowPlayingController(
             playList: PlayListController(),

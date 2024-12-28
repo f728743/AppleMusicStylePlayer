@@ -8,43 +8,32 @@
 import Combine
 import SwiftUI
 
-enum ButtonType {
-    case play
-    case stop
-    case pause
-    case backward
-    case forward
-}
-
-struct PlayerButton: View {
+struct PlayerButton<Content: View>: View {
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.playerButtonConfig) var config
     @State private var showCircle = false
     @State private var pressed = false
-    private let type: ButtonType
-    @Environment(\.playerButtonConfig) var config
     private let onPressed: (() -> Void)?
     private let onPressing: ((TimeInterval) -> Void)?
     private let onEnded: (() -> Void)?
+    private let label: Content?
 
     init(
-        _ type: ButtonType,
+        label: (() -> Content)? = nil,
         onPressed: (() -> Void)? = nil,
         onPressing: ((TimeInterval) -> Void)? = nil,
         onEnded: (() -> Void)? = nil
     ) {
-        self.type = type
+        self.label = label?()
         self.onPressed = onPressed
         self.onPressing = onPressing
         self.onEnded = onEnded
     }
 
     var body: some View {
-        Image(systemName: type.systemImage)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: config.imageSize, height: config.imageSize)
+        label
             .scaleEffect(pressed ? 0.9 : 1)
-            .frame(width: config.circleSize, height: config.circleSize)
+            .frame(width: config.size, height: config.size)
             .foregroundColor(color)
             .background(showCircle ? config.tint : .clear)
             .clipShape(Ellipse())
@@ -105,8 +94,7 @@ extension EnvironmentValues {
 
 struct PlayerButtonConfig {
     let updateUnterval: TimeInterval
-    let imageSize: CGFloat
-    let circleSize: CGFloat
+    let size: CGFloat
     let labelColor: Color
     let tint: Color
     let pressedColor: Color
@@ -114,16 +102,14 @@ struct PlayerButtonConfig {
 
     init(
         updateUnterval: TimeInterval = 0.1,
-        imageSize: CGFloat = 34,
-        circleSize: CGFloat = 68,
+        size: CGFloat = 68,
         labelColor: Color = .init(UIColor.label),
         tint: Color = .init(UIColor.tintColor),
         pressedColor: Color = .init(UIColor.secondaryLabel),
         disabledColor: Color = .init(UIColor.secondaryLabel)
     ) {
         self.updateUnterval = updateUnterval
-        self.imageSize = imageSize
-        self.circleSize = circleSize
+        self.size = size
         self.labelColor = labelColor
         self.tint = tint
         self.pressedColor = pressedColor
@@ -131,51 +117,52 @@ struct PlayerButtonConfig {
     }
 }
 
-extension ButtonType {
-    var systemImage: String {
-        switch self {
-        case .play: "play.fill"
-        case .stop: "stop.fill"
-        case .pause: "pause.fill"
-        case .backward: "backward.fill"
-        case .forward: "forward.fill"
-        }
+extension PlayerButton where Content == EmptyView {
+    init(
+        onPressed: (() -> Void)? = nil,
+        onPressing: ((TimeInterval) -> Void)? = nil,
+        onEnded: (() -> Void)? = nil
+    ) {
+        label = nil
+        self.onPressed = onPressed
+        self.onPressing = onPressing
+        self.onEnded = onEnded
     }
 }
 
 #Preview {
-    HStack(spacing: 60) {
-        VStack {
+    struct ButtonPreview: View {
+        var body: some View {
             PlayerButton(
-                .play,
+                label: {
+                    Image(systemName: "play.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 34, height: 34)
+
+                },
                 onPressed: {
-                    print("onPressed Button One")
+                    print("onPressed Button")
                 },
                 onPressing: { time in
-                    print("onPressing \(time) Button One")
+                    print("onPressing \(time) Button")
                 },
                 onEnded: {
-                    print("onEnded Button One")
+                    print("onEnded Button")
                 }
             )
-            .disabled(true)
+        }
+    }
+
+    return HStack(spacing: 60) {
+        VStack {
+            ButtonPreview()
+                .disabled(true)
             Text("Disabled")
         }
 
         VStack {
-            PlayerButton(
-                .play,
-                onPressed: {
-                    print("onPressed Button Two")
-                },
-                onPressing: { time in
-                    print("onPressing \(time) Button Two")
-                },
-                onEnded: {
-                    print("onEnded Button Two")
-                }
-            )
-            .disabled(false)
+            ButtonPreview()
             Text("Enabled")
         }
     }
