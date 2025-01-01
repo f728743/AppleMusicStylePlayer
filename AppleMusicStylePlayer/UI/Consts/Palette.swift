@@ -21,6 +21,11 @@ extension Palette {
         dark: .black
     )
 
+    static let brand: UIColor = .dynamic(
+        light: UIColor.systemPink,
+        dark: UIColor.systemPink
+    )
+
     static func appBackground(expandProgress: CGFloat) -> UIColor {
         UIColor {
             $0.userInterfaceStyle == .light

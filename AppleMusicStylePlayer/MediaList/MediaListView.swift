@@ -17,6 +17,8 @@ struct MediaListView: View {
             content
                 .padding(.horizontal, 20)
         }
+        .contentMargins(.bottom, ViewConst.tabbarHeight, for: .scrollContent)
+        .contentMargins(.bottom, ViewConst.tabbarHeight, for: .scrollIndicators)
         .background(Color(.palette.appBackground(expandProgress: expandProgress)))
     }
 }
@@ -41,7 +43,6 @@ private extension MediaListView {
                 }
             }
         }
-        .padding(.bottom, 70)
     }
 }
 

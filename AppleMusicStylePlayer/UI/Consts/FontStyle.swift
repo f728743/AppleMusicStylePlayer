@@ -10,6 +10,7 @@ import SwiftUI
 enum FontStyle {
     case timingIndicator
     case miniPlayerTitle
+    case tabbar
 }
 
 struct Typography {
@@ -29,6 +30,11 @@ extension FontStyle {
             Typography(
                 font: .system(size: 15, weight: .regular),
                 kerning: 0.11
+            )
+        case .tabbar:
+            Typography(
+                font: .system(size: 10, weight: .regular),
+                kerning: 0
             )
         }
     }

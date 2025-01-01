@@ -8,23 +8,15 @@
 import SwiftUI
 
 struct RootView: View {
+    @State private var tabSelection: TabBarItem = .home
+
     var body: some View {
-        TabView {
-            Tab("Home", systemImage: "house") {
-                MediaListView()
-            }
+        CustomTabView(selection: $tabSelection) {
+            MediaListView()
+                .tabBarItem(tab: .home, selection: $tabSelection)
 
-            Tab("Search", systemImage: "magnifyingglass") {
-                Text("Search")
-            }
-
-            Tab("Notifications", systemImage: "bell") {
-                Text("Notifications")
-            }
-
-            Tab("Settings", systemImage: "gearshape") {
-                Text("Settings")
-            }
+            Text("Looking for something?")
+                .tabBarItem(tab: .search, selection: $tabSelection)
         }
     }
 }
