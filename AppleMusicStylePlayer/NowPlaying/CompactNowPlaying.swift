@@ -12,6 +12,7 @@ struct CompactNowPlaying: View {
     @Environment(NowPlayingController.self) var model
     @Binding var expanded: Bool
     var animationNamespace: Namespace.ID
+    @State var forwardAnimationTrigger: PlayerButtonTrigger = .one(bouncing: false)
 
     var body: some View {
         HStack(spacing: 8) {
@@ -37,10 +38,15 @@ struct CompactNowPlaying: View {
 
             PlayerButton(
                 label: {
-                    PlayerButtonLabel(type: model.forwardButton, size: 30)
+                    PlayerButtonLabel(
+                        type: model.forwardButton,
+                        size: 30,
+                        animationTrigger: forwardAnimationTrigger
+                    )
                 },
                 onEnded: {
                     model.onForward()
+                    forwardAnimationTrigger.toggle(bouncing: true)
                 }
             )
             .playerButtonStyle(.miniPlayer)

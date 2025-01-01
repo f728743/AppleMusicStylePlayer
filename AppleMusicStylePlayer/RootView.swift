@@ -1,5 +1,5 @@
 //
-//  ApplicationTabView.swift
+//  RootView.swift
 //  AppleMusicStylePlayer
 //
 //  Created by Alexey Vorobyov on 27.11.2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ApplicationTabView: View {
+struct RootView: View {
     var body: some View {
         TabView {
             Tab("Home", systemImage: "house") {
@@ -30,6 +30,6 @@ struct ApplicationTabView: View {
 }
 
 #Preview {
-    ApplicationTabView()
+    RootView()
         .environment(PlayListController())
 }

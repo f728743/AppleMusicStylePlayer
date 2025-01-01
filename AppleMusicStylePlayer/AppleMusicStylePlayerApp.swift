@@ -12,7 +12,7 @@ struct AppleMusicStylePlayerApp: App {
     var body: some Scene {
         WindowGroup {
             OverlayableRootView {
-                ApplicationView()
+                OverlaidRootView()
             }
         }
     }

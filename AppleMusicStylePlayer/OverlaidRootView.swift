@@ -1,5 +1,5 @@
 //
-//  ApplicationView.swift
+//  OverlaidRootView.swift
 //  AppleMusicStylePlayer
 //
 //  Created by Alexey Vorobyov on 17.11.2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ApplicationView: View {
+struct OverlaidRootView: View {
     @State private var showMiniPlayer: Bool = false
     @State private var playlistController: PlayListController
     @State private var playerController: NowPlayingController
@@ -23,7 +23,7 @@ struct ApplicationView: View {
     }
 
     var body: some View {
-        ApplicationTabView()
+        RootView()
             .environment(playerController)
             .environment(playlistController)
             .universalOverlay(show: $showMiniPlayer) {
@@ -42,6 +42,6 @@ struct ApplicationView: View {
 
 #Preview {
     OverlayableRootView {
-        ApplicationView()
+        OverlaidRootView()
     }
 }

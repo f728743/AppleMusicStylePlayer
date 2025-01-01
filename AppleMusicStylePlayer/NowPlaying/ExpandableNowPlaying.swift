@@ -232,6 +232,6 @@ private extension UIWindow {
 
 #Preview {
     OverlayableRootView {
-        ApplicationView()
+        OverlaidRootView()
     }
 }
