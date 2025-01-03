@@ -12,4 +12,5 @@ enum ViewConst {}
 extension ViewConst {
     static let playerCardPaddings: CGFloat = 32
     static let tabbarHeight: CGFloat = 126
+    static let compactNowPlayingHeight: CGFloat = 56
 }

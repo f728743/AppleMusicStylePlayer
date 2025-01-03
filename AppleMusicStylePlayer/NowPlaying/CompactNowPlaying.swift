@@ -11,6 +11,7 @@ import SwiftUI
 struct CompactNowPlaying: View {
     @Environment(NowPlayingController.self) var model
     @Binding var expanded: Bool
+    var hideArtworkOnExpanded: Bool = true
     var animationNamespace: Namespace.ID
     @State var forwardAnimationTrigger: PlayerButtonTrigger = .one(bouncing: false)
 
@@ -51,9 +52,8 @@ struct CompactNowPlaying: View {
             )
             .playerButtonStyle(.miniPlayer)
         }
-
         .padding(.horizontal, 8)
-        .frame(height: 56)
+        .frame(height: ViewConst.compactNowPlayingHeight)
         .contentShape(.rect)
         .transformEffect(.identity)
         .onTapGesture {
@@ -67,7 +67,7 @@ struct CompactNowPlaying: View {
 private extension CompactNowPlaying {
     @ViewBuilder
     var artwork: some View {
-        if !expanded {
+        if !hideArtworkOnExpanded || !expanded {
             KFImage.url(model.display.artwork)
                 .resizable()
                 .aspectRatio(contentMode: .fill)

@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct OverlaidRootView: View {
-    @State private var showMiniPlayer: Bool = false
     @State private var playlistController: PlayListController
     @State private var playerController: NowPlayingController
     @State private var nowPlayingExpandProgress: CGFloat = .zero
+    @State private var showOverlayingNowPlayng: Bool = true
+    @State private var expandedNowPlaying: Bool = false
+    @State private var showNowPlayingReplacement: Bool = false
 
     init() {
         let playlistController = PlayListController()
@@ -23,20 +25,52 @@ struct OverlaidRootView: View {
     }
 
     var body: some View {
-        RootView()
+        ZStack(alignment: .bottom) {
+            RootView()
+            CompactNowPlayingReplacement(expanded: .constant(false))
+                .opacity(showNowPlayingReplacement ? 1 : 0)
+        }
+        .environment(playerController)
+        .environment(playlistController)
+        .universalOverlay(animation: .none, show: $showOverlayingNowPlayng) {
+            ExpandableNowPlaying(
+                show: $showOverlayingNowPlayng,
+                expanded: $expandedNowPlaying
+            )
             .environment(playerController)
-            .environment(playlistController)
-            .universalOverlay(show: $showMiniPlayer) {
-                ExpandableNowPlaying(show: $showMiniPlayer)
-                    .environment(playerController)
-                    .onPreferenceChange(NowPlayingExpandProgressPreferenceKey.self) { value in
-                        nowPlayingExpandProgress = value
-                    }
+            .onPreferenceChange(NowPlayingExpandProgressPreferenceKey.self) { value in
+                nowPlayingExpandProgress = value
             }
-            .environment(\.nowPlayingExpandProgress, nowPlayingExpandProgress)
-            .onAppear {
-                showMiniPlayer = true
-            }
+        }
+        .environment(\.nowPlayingExpandProgress, nowPlayingExpandProgress)
+    }
+    
+    func showNowPlayng(replacement: Bool) {
+        guard !expandedNowPlaying else { return }
+        showOverlayingNowPlayng = !replacement
+        showNowPlayingReplacement = replacement
+    }
+}
+        
+private struct CompactNowPlayingReplacement: View {
+    @Namespace private var animationNamespaceStub
+    @Binding var expanded: Bool
+    var body: some View {
+        ZStack(alignment: .top) {
+            NowPlayingBackground(
+                colors: [],
+                expanded: false,
+                isFullExpanded: false,
+                canBeExpanded: false
+            )
+            CompactNowPlaying(
+                expanded: $expanded,
+                hideArtworkOnExpanded: false,
+                animationNamespace: animationNamespaceStub
+            )
+        }
+        .padding(.horizontal, 12)
+        .padding(.bottom, ViewConst.compactNowPlayingHeight)
     }
 }
 

@@ -10,7 +10,7 @@ import SwiftUI
 extension View {
     @ViewBuilder
     func universalOverlay<Content: View>(
-        animation: Animation = .snappy,
+        animation: Animation? = .snappy,
         show: Binding<Bool>,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
@@ -69,7 +69,7 @@ private class UniversalOverlayProperties {
 }
 
 private struct UniversalOverlayModifier<ViewContent: View>: ViewModifier {
-    var animation: Animation
+    var animation: Animation?
     @Binding var show: Bool
     @ViewBuilder var viewContent: ViewContent
     @Environment(UniversalOverlayProperties.self) private var properties
