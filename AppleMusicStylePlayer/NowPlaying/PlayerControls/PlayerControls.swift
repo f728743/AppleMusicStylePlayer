@@ -51,11 +51,11 @@ private extension PlayerControls {
                     .transformEffect(.identity)
                     .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundColor(Color(palette.opaque))
+                    .foregroundStyle(Color(palette.opaque))
                     .id(model.display.title)
                 MarqueeText(model.display.subtitle ?? "", config: cfg)
                     .transformEffect(.identity)
-                    .foregroundColor(Color(palette.opaque))
+                    .foregroundStyle(Color(palette.opaque))
                     .blendMode(.overlay)
                     .id(model.display.subtitle)
             }
@@ -93,7 +93,7 @@ private extension PlayerControls {
                     .font(.title2)
             }
         }
-        .foregroundColor(Color(palette.opaque))
+        .foregroundStyle(Color(palette.opaque))
         .blendMode(.overlay)
     }
 }

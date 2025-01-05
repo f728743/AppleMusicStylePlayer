@@ -34,7 +34,7 @@ struct PlayerButton<Content: View>: View {
         label
             .scaleEffect(pressed ? 0.9 : 1)
             .frame(width: config.size, height: config.size)
-            .foregroundColor(color)
+            .foregroundStyle(color)
             .background(showCircle ? config.tint : .clear)
             .clipShape(Ellipse())
             .scaleEffect(pressed ? 0.85 : 1)

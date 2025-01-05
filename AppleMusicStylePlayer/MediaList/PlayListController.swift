@@ -16,11 +16,26 @@ class PlayListController {
         selectFirstAvailable()
     }
 
+    var display: MediaList {
+        current ?? .placeholder
+    }
+
     var items: [Media] {
         current?.items ?? []
     }
 
     func selectFirstAvailable() {
         current = library.list.first { !$0.items.isEmpty }
+    }
+}
+
+private extension MediaList {
+    static var placeholder: Self {
+        MediaList(
+            artwork: nil,
+            title: "---",
+            subtitle: nil,
+            items: []
+        )
     }
 }

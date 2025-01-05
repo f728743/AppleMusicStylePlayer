@@ -62,7 +62,7 @@ private struct CustomTabBarView: View {
                 .text(style: .tabbar)
                 .padding(.bottom, 2)
         }
-        .foregroundColor(localSelection == tab ? Color(.palette.brand) : Color.gray)
+        .foregroundStyle(localSelection == tab ? Color(.palette.brand) : Color.gray)
         .frame(maxWidth: .infinity)
     }
 

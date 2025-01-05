@@ -77,7 +77,7 @@ extension PlayerButtonConfig {
             Text("Footer")
                 .blendMode(.overlay)
         }
-        .foregroundColor(.init(Palette.PlayerCard.opaque))
+        .foregroundStyle(Color(Palette.PlayerCard.opaque))
     }
     .environment(
         NowPlayingController(playList: PlayListController(), player: Player())

@@ -7,8 +7,35 @@
 
 import Foundation
 
-private func url(_ satrion: String) -> URL? {
-    URL(string: "https://raw.githubusercontent.com/tmp-acc/GTA-V-Radio-Stations/master/\(satrion)/\(satrion).png")
+struct MockGTA5Radio {
+    private let stations = gta5stations
+}
+
+extension MockGTA5Radio {
+    var mediaList: MediaList {
+        MediaList(
+            artwork: stationGroupImageUrl(),
+            title: "GTA V Radio",
+            subtitle: nil,
+            items: stations.map {
+                Media(
+                    artwork: stationImageUrl(String($0.logo.split(separator: ".")[0])),
+                    title: $0.title,
+                    subtitle: $0.genre,
+                    online: false
+                )
+            }
+        )
+    }
+}
+
+private let gta5BaseUrl = "https://raw.githubusercontent.com/tmp-acc/GTA-V-Radio-Stations/master"
+private func stationImageUrl(_ satrion: String) -> URL? {
+    URL(string: "\(gta5BaseUrl)/\(satrion)/\(satrion).png")
+}
+
+private func stationGroupImageUrl() -> URL? {
+    URL(string: "\(gta5BaseUrl)/gta_v.png")
 }
 
 private struct GTARadioStation {
@@ -122,22 +149,3 @@ private let gta5stations: [GTARadioStation] = [
         dj: "Nate Williams and Stephen Pope"
     )
 ]
-
-struct MockGTA5Radio {
-    private let stations = gta5stations
-}
-
-extension MockGTA5Radio {
-    var mediaList: MediaList {
-        MediaList(
-            items: stations.map {
-                Media(
-                    artwork: url(String($0.logo.split(separator: ".")[0])),
-                    title: $0.title,
-                    subtitle: $0.genre,
-                    online: false
-                )
-            }
-        )
-    }
-}

@@ -13,8 +13,8 @@ enum PlayerMatchedGeometry {
 
 struct ExpandableNowPlaying: View {
     @Binding var show: Bool
+    @Binding var expanded: Bool
     @Environment(NowPlayingController.self) var model
-    @State private var expandPlayer: Bool = false
     @State private var offsetY: CGFloat = 0.0
     @State private var mainWindow: UIWindow?
     @State private var needRestoreProgressOnActive: Bool = false
@@ -32,8 +32,8 @@ struct ExpandableNowPlaying: View {
                 }
                 model.onAppear()
             }
-            .onChange(of: expandPlayer) {
-                if expandPlayer {
+            .onChange(of: expanded) {
+                if expanded {
                     stacked(progress: 1, withAnimation: true)
                 }
             }
@@ -72,26 +72,30 @@ private extension ExpandableNowPlaying {
             let safeArea = $0.safeAreaInsets
 
             ZStack(alignment: .top) {
-                background(colors: model.colors.map { $0.color })
+                NowPlayingBackground(
+                    colors: model.colors.map { Color($0.color) },
+                    expanded: expanded,
+                    isFullExpanded: isFullExpanded
+                )
                 CompactNowPlaying(
-                    expanded: $expandPlayer,
+                    expanded: $expanded,
                     animationNamespace: animationNamespace
                 )
-                .opacity(expandPlayer ? 0 : 1)
+                .opacity(expanded ? 0 : 1)
 
                 RegularNowPlaying(
-                    expanded: $expandPlayer,
+                    expanded: $expanded,
                     size: size,
                     safeArea: safeArea,
                     animationNamespace: animationNamespace
                 )
-                .opacity(expandPlayer ? 1 : 0)
+                .opacity(expanded ? 1 : 0)
                 ProgressTracker(progress: progressTrackState)
             }
-            .frame(height: expandPlayer ? nil : 55, alignment: .top)
+            .frame(height: expanded ? nil : ViewConst.compactNowPlayingHeight, alignment: .top)
             .frame(maxHeight: .infinity, alignment: .bottom)
-            .padding(.bottom, expandPlayer ? 0 : safeArea.bottom + 56)
-            .padding(.horizontal, expandPlayer ? 0 : 12)
+            .padding(.bottom, expanded ? 0 : safeArea.bottom + ViewConst.compactNowPlayingHeight)
+            .padding(.horizontal, expanded ? 0 : 12)
             .offset(y: offsetY)
             .gesture(
                 PanGesture(
@@ -103,27 +107,8 @@ private extension ExpandableNowPlaying {
         }
     }
 
-    func background(colors: [UIColor]) -> some View {
-        let expandPlayerCornerRadius = (isFullExpanded ? 0 : UIScreen.DeviceCornerRadius)
-        return ZStack {
-            Rectangle()
-                .fill(.thickMaterial)
-            ColorfulBackground(colors: model.colors.map { Color($0.color) })
-                .overlay(Color(UIColor(white: 0.4, alpha: 0.5)))
-                .opacity(expandPlayer ? 1 : 0)
-        }
-        .clipShape(.rect(cornerRadius: expandPlayer ? expandPlayerCornerRadius : 14))
-        .frame(height: expandPlayer ? nil : 56)
-        .shadow(
-            color: .primary.opacity(colorScheme == .light ? 0.2 : 0),
-            radius: 8,
-            x: 0,
-            y: 2
-        )
-    }
-
     func handleGestureChange(value: PanGesture.Value, viewSize: CGSize) {
-        guard expandPlayer else { return }
+        guard expanded else { return }
         let translation = max(value.translation.height, 0)
         offsetY = translation
         windowProgress = max(min(translation / viewSize.height, 1), 0)
@@ -131,12 +116,12 @@ private extension ExpandableNowPlaying {
     }
 
     func handleGestureEnd(value: PanGesture.Value, viewSize: CGSize) {
-        guard expandPlayer else { return }
+        guard expanded else { return }
         let translation = max(value.translation.height, 0)
         let velocity = value.velocity.height / 5
         withAnimation(.playerExpandAnimation) {
             if (translation + velocity) > (viewSize.height * 0.3) {
-                expandPlayer = false
+                expanded = false
                 resetStackedWithAnimation()
             } else {
                 stacked(progress: 1, withAnimation: true)
@@ -146,7 +131,7 @@ private extension ExpandableNowPlaying {
     }
 
     func handeApp(active: Bool) {
-        guard expandPlayer else { return }
+        guard expanded else { return }
         if active, needRestoreProgressOnActive {
             stacked(progress: 1, withAnimation: false)
         } else {

@@ -56,10 +56,10 @@ private extension ElasticSlider {
         if config.syncLabelsStyle {
             ZStack {
                 content
-                    .foregroundColor(config.maximumTrackColor)
+                    .foregroundStyle(config.maximumTrackColor)
                     .blendMode(config.blendMode)
                 content
-                    .foregroundColor(isActive ? config.minimumTrackActiveColor : config.minimumTrackInactiveColor)
+                    .foregroundStyle(isActive ? config.minimumTrackActiveColor : config.minimumTrackInactiveColor)
             }
             .animation(nil, value: isActive)
             .blendMode(isActive ? .normal : config.blendMode)
