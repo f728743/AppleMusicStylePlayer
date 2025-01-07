@@ -59,7 +59,7 @@ private struct CustomTabBarView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 24, height: 24)
             Text(tab.title)
-                .text(style: .tabbar)
+                .font(.appFont.tabbar)
                 .padding(.bottom, 2)
         }
         .foregroundStyle(localSelection == tab ? Color(.palette.brand) : Color.gray)

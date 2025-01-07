@@ -12,7 +12,7 @@ struct NowPlayingBackground: View {
     let expanded: Bool
     let isFullExpanded: Bool
     var canBeExpanded: Bool = true
-    
+
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View {

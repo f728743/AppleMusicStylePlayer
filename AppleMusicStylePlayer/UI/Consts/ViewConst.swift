@@ -21,7 +21,7 @@ extension ViewConst {
 }
 
 extension EdgeInsets {
-    init (_ insets: UIEdgeInsets) {
+    init(_ insets: UIEdgeInsets) {
         self.init(
             top: insets.top,
             leading: insets.left,

@@ -22,7 +22,7 @@ struct CompactNowPlaying: View {
 
             Text(model.title)
                 .lineLimit(1)
-                .text(style: .miniPlayerTitle)
+                .font(.appFont.miniPlayerTitle)
                 .padding(.trailing, -18)
 
             Spacer(minLength: 0)

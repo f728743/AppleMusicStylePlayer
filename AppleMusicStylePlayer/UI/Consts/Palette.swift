@@ -25,7 +25,7 @@ extension Palette {
         light: UIColor.systemPink,
         dark: UIColor.systemPink
     )
-    
+
     static let artworkBorder: UIColor = .dynamic(
         light: .black.withAlphaComponent(0.2),
         dark: .white.withAlphaComponent(0.2)
@@ -44,6 +44,11 @@ extension Palette {
     static let textSecondary: UIColor = .dynamic(
         light: UIColor(r: 138, g: 138, b: 142, a: 255),
         dark: UIColor(r: 141, g: 141, b: 147, a: 255)
+    )
+
+    static let textTertiary: UIColor = .dynamic(
+        light: UIColor(r: 127, g: 127, b: 127, a: 255),
+        dark: UIColor(r: 128, g: 128, b: 128, a: 255)
     )
 
     static func appBackground(expandProgress: CGFloat) -> UIColor {

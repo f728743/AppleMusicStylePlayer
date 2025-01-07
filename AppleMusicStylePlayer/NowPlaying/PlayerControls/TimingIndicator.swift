@@ -32,7 +32,7 @@ struct TimingIndicator: View {
 private extension TimingIndicator {
     func label(_ text: String) -> some View {
         Text(text)
-            .text(style: .timingIndicator)
+            .font(.appFont.timingIndicator)
             .padding(.top, 11)
     }
 

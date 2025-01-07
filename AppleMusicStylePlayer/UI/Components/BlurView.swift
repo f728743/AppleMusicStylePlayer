@@ -33,7 +33,7 @@ final class CustomVisualEffectView: UIVisualEffectView {
     private let theEffect: UIVisualEffect
     private let intensity: CGFloat
     private var animator: UIViewPropertyAnimator?
-    
+
     init(effect: UIVisualEffect, intensity: CGFloat) {
         theEffect = effect
         self.intensity = intensity

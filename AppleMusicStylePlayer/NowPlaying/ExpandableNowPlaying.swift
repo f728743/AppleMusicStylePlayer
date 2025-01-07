@@ -192,7 +192,7 @@ private extension UIWindow {
             self.resetStacked()
         }
     }
-    
+
     private func resetStacked() {
         layer.cornerRadius = 0.0
         transform = .identity

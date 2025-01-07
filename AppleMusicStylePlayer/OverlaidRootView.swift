@@ -44,14 +44,14 @@ struct OverlaidRootView: View {
         }
         .environment(\.nowPlayingExpandProgress, nowPlayingExpandProgress)
     }
-    
+
     func showNowPlayng(replacement: Bool) {
         guard !expandedNowPlaying else { return }
         showOverlayingNowPlayng = !replacement
         showNowPlayingReplacement = replacement
     }
 }
-        
+
 private struct CompactNowPlayingReplacement: View {
     @Namespace private var animationNamespaceStub
     @Binding var expanded: Bool

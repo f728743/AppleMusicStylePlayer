@@ -6,6 +6,7 @@
 //
 
 import Observation
+import SwiftUI
 
 @Observable
 class PlayListController {
@@ -22,6 +23,10 @@ class PlayListController {
 
     var items: [Media] {
         current?.items ?? []
+    }
+
+    var footer: LocalizedStringKey? {
+        current.map { "^[\($0.items.count) station](inflect: true)" }
     }
 
     func selectFirstAvailable() {
