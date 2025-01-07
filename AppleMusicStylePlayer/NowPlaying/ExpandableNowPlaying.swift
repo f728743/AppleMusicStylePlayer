@@ -37,12 +37,6 @@ struct ExpandableNowPlaying: View {
                     stacked(progress: 1, withAnimation: true)
                 }
             }
-            .onReceive(appInactive) { _ in
-                handeApp(active: false)
-            }
-            .onReceive(appActive) { _ in
-                handeApp(active: true)
-            }
             .onPreferenceChange(NowPlayingExpandProgressPreferenceKey.self) { value in
                 expandProgress = value
             }
@@ -52,18 +46,6 @@ struct ExpandableNowPlaying: View {
 private extension ExpandableNowPlaying {
     var isFullExpanded: Bool {
         expandProgress >= 1
-    }
-
-    var appInactive: NotificationCenter.Publisher {
-        NotificationCenter
-            .default
-            .publisher(for: UIApplication.willResignActiveNotification)
-    }
-
-    var appActive: NotificationCenter.Publisher {
-        NotificationCenter
-            .default
-            .publisher(for: UIApplication.didBecomeActiveNotification)
     }
 
     var expandableNowPlaying: some View {
@@ -130,16 +112,6 @@ private extension ExpandableNowPlaying {
         }
     }
 
-    func handeApp(active: Bool) {
-        guard expanded else { return }
-        if active, needRestoreProgressOnActive {
-            stacked(progress: 1, withAnimation: false)
-        } else {
-            needRestoreProgressOnActive = true
-            mainWindow?.transform = .identity
-        }
-    }
-
     func stacked(progress: CGFloat, withAnimation: Bool) {
         if withAnimation {
             SwiftUI.withAnimation(.playerExpandAnimation) {
@@ -188,9 +160,17 @@ private struct ProgressTracker: View, Animatable {
 private extension UIWindow {
     func stacked(progress: CGFloat, animationDuration: TimeInterval?) {
         if let animationDuration {
-            UIView.animate(withDuration: animationDuration) {
-                self.stacked(progress: progress)
-            }
+            UIView.animate(
+                withDuration: animationDuration,
+                animations: {
+                    self.stacked(progress: progress)
+                },
+                completion: { _ in
+                    delay(animationDuration) {
+                        self.resetStacked()
+                    }
+                }
+            )
         } else {
             stacked(progress: progress)
         }
@@ -209,9 +189,13 @@ private extension UIWindow {
 
     func resetStackedWithAnimation(duration: TimeInterval) {
         UIView.animate(withDuration: duration) {
-            self.layer.cornerRadius = 0.0
-            self.transform = .identity
+            self.resetStacked()
         }
+    }
+    
+    private func resetStacked() {
+        layer.cornerRadius = 0.0
+        transform = .identity
     }
 }
 
