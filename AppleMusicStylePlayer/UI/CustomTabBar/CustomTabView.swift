@@ -77,8 +77,7 @@ private struct CustomTabBarView: View {
         }
         .padding(.top, 68)
         .background(
-            Rectangle()
-                .fill(.thinMaterial)
+            BlurView(style: .systemChromeMaterial)
                 .mask(mask)
                 .ignoresSafeArea(edges: .bottom)
         )
