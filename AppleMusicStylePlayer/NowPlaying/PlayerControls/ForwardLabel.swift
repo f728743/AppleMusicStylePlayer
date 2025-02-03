@@ -125,9 +125,9 @@ private struct AnimationWrapper: View, Animatable {
     let linear: Bool
     var progress: Double
 
-    var animatableData: CGFloat {
-        get { progress }
-        set { progress = newValue }
+    nonisolated var animatableData: CGFloat {
+        get { CGFloat(progress) }
+        set { progress = Double(newValue) }
     }
 
     var body: some View {

@@ -99,7 +99,7 @@ private struct CustomTabBarView: View {
 // MARK: Preference and ViewModifier
 
 struct TabBarItemsPreferenceKey: PreferenceKey {
-    static var defaultValue: [TabBarItem] = []
+    static let defaultValue: [TabBarItem] = []
 
     static func reduce(value: inout [TabBarItem], nextValue: () -> [TabBarItem]) {
         value += nextValue()

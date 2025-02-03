@@ -7,16 +7,24 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 
 enum ViewConst {}
 
+@MainActor
 extension ViewConst {
     static let playerCardPaddings: CGFloat = 32
     static let screenPaddings: CGFloat = 20
     static let tabbarHeight: CGFloat = safeAreaInsets.bottom + 92
     static let compactNowPlayingHeight: CGFloat = 56
     static var safeAreaInsets: EdgeInsets {
-        EdgeInsets(UIApplication.keyWindow?.safeAreaInsets ?? .zero)
+        if let windowScene = UIApplication.shared.connectedScenes
+            .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+           let window = windowScene.windows.first(where: { $0.isKeyWindow }) {
+            return EdgeInsets(window.safeAreaInsets)
+        } else {
+            return EdgeInsets(UIEdgeInsets.zero)
+        }
     }
 }
 

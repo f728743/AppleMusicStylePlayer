@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct NowPlayingExpandProgressPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
+    static let defaultValue: CGFloat = .zero
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }
 }
 
 private struct NowPlayingExpandProgressEnvironmentKey: EnvironmentKey {
-    static var defaultValue: Double = .zero
+    static let defaultValue: Double = .zero
 }
 
 extension EnvironmentValues {

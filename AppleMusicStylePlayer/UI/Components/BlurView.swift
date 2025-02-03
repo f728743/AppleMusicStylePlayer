@@ -32,7 +32,7 @@ struct BlurView: UIViewRepresentable {
 final class CustomVisualEffectView: UIVisualEffectView {
     private let theEffect: UIVisualEffect
     private let intensity: CGFloat
-    private var animator: UIViewPropertyAnimator?
+    @MainActor private var animator: UIViewPropertyAnimator?
 
     init(effect: UIVisualEffect, intensity: CGFloat) {
         theEffect = effect
@@ -43,9 +43,14 @@ final class CustomVisualEffectView: UIVisualEffectView {
     required init?(coder _: NSCoder) { nil }
 
     deinit {
-        animator?.stopAnimation(true)
+        let animator = self.animator
+        self.animator = nil
+        Task { @MainActor in
+            animator?.stopAnimation(true)
+        }
     }
 
+    @MainActor
     override public func draw(_ rect: CGRect) {
         super.draw(rect)
         effect = nil

@@ -302,7 +302,7 @@ extension View {
 }
 
 private struct ElasticSliderConfigEnvironmentKey: EnvironmentKey {
-    static var defaultValue: ElasticSliderConfig = .init()
+    static let defaultValue: ElasticSliderConfig = .init()
 }
 
 extension EnvironmentValues {
