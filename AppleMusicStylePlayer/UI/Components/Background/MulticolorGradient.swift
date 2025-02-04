@@ -9,25 +9,37 @@ import SwiftUI
 
 struct MulticolorGradient: View, Animatable {
     var points: ColorPoints
-    var animationUpdateHandler: ((ColorPoints) -> Void)?
+    var animationUpdateHandler: (@Sendable (ColorPoints) -> Void)?
 
     var uniforms: Uniforms {
         Uniforms(params: GradientParams(points: points, bias: 0.05, power: 2.5, noise: 2))
     }
 
-    var animatableData: ColorPoints.AnimatableData {
+    nonisolated var animatableData: ColorPoints.AnimatableData {
         get {
             points.animatableData
         }
         set {
-            points = ColorPoints(newValue)
-            animationUpdateHandler?(points)
+            let newPoints = ColorPoints(newValue)
+            points = newPoints
+            let viewCopy = self
+            Task { @MainActor in
+                viewCopy.animationUpdateHandler?(newPoints)
+            }
         }
     }
 
     var body: some View {
         Rectangle()
             .colorEffect(ShaderLibrary.gradient(.boundingRect, .uniforms(uniforms)))
+    }
+}
+
+@MainActor
+private extension MulticolorGradient {
+    mutating func updatePoints(newPoints: ColorPoints) {
+        points = newPoints
+        animationUpdateHandler?(newPoints)
     }
 }
 

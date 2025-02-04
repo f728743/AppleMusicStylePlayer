@@ -145,7 +145,7 @@ extension Animation {
 private struct ProgressTracker: View, Animatable {
     var progress: CGFloat = 0
 
-    var animatableData: CGFloat {
+    nonisolated var animatableData: CGFloat {
         get { progress }
         set { progress = newValue }
     }
@@ -167,7 +167,9 @@ private extension UIWindow {
                 },
                 completion: { _ in
                     delay(animationDuration) {
-                        self.resetStacked()
+                        DispatchQueue.main.async {
+                            self.resetStacked()
+                        }
                     }
                 }
             )
@@ -189,7 +191,9 @@ private extension UIWindow {
 
     func resetStackedWithAnimation(duration: TimeInterval) {
         UIView.animate(withDuration: duration) {
-            self.resetStacked()
+            DispatchQueue.main.async {
+                self.resetStacked()
+            }
         }
     }
 

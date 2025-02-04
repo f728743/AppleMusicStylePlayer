@@ -9,6 +9,7 @@ import Kingfisher
 import Observation
 import UIKit
 
+@MainActor
 @Observable
 class NowPlayingController {
     enum State {
@@ -125,13 +126,9 @@ private extension NowPlayingController {
 
     func updateColors() {
         guard let url = display.artwork else { return }
-        KingfisherManager.shared.retrieveImage(
-            with: url,
-            options: nil,
-            progressBlock: nil
-        ) { [weak self] result in
-            if case let .success(image) = result {
-                self?.colors = (image.image.dominantColorFrequencies(with: .high) ?? [])
+        Task { @MainActor in
+            if let image = try? await KingfisherManager.shared.retrieveImage(with: url).image {
+                self.colors = (image.dominantColorFrequencies(with: .high) ?? [])
             }
         }
     }

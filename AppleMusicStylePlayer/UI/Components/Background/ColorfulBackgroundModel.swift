@@ -8,8 +8,9 @@
 import Combine
 import SwiftUI
 
+@MainActor
 @Observable
-class ColorfulBackgroundModel {
+class ColorfulBackgroundModel: @unchecked Sendable {
     static let animationDuration: Double = 20
     var points: ColorPoints = .zero.shuffled
 
