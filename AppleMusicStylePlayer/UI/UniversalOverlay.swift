@@ -133,7 +133,13 @@ private class PassthroughWindow: UIWindow {
             return nil
         }
 
-        if #available(iOS 18, *) {
+        if #available(iOS 26, *) {
+            let layerName = rootView.layer.hitTest(point)?.name
+            
+            if layerName == nil || layerName?.hasPrefix("@") == true {
+                return rootView
+            }
+        } else if #available(iOS 18, *) {
             for subview in rootView.subviews.reversed() {
                 /// Finding if any of rootview's subview is receiving hit test.
                 let pointInSubView = subview.convert(point, from: rootView)
@@ -141,10 +147,9 @@ private class PassthroughWindow: UIWindow {
                     return hitView
                 }
             }
-            return nil
-        } else {
-            return hitView == rootView ? nil : hitView
         }
+        
+        return nil
     }
 }
 
